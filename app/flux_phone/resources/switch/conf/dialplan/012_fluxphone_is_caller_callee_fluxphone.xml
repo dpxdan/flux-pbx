@@ -1,0 +1,6 @@
+<extension name="fluxphone_is_caller_callee_fluxphone" number="" context="global" continue="true" app_uuid="29ad51b0-6ab0-4d65-9394-629d1a34580b" order="25">
+	<condition field="${user_exists}" expression="true">
+		<action application="set" data="call_center_agent_uuid=${sip_h_P-flx-endpoint-appUser}" inline="true"/>
+		<action application="lua" data="app.lua flux_phone"/>
+	</condition>
+</extension>

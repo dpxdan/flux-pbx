@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+#
+# FluxPBX
+# TTS Voice Prompt Generator
+#
+# Copyright (c) 2022, Daniel Paixao <daniel@flux.net.br>
+# See LICENSE file for details.
+#
+### arg broadcast_id
+if [ "$1" == "" ]; then
+        echo "Variavel Name FS"
+        exit 1
+fi
+if [ "$2" == "" ]; then
+        echo "Variavel UUID FS"
+        exit 1
+fi
+if [ "$3" == "" ]; then
+        echo "Variavel Domain FS"
+        exit 1
+fi
+
+sudo -u www-data /bin/rm -rf /var/www/html/fluxpbx/app/flux_text_speech/recordings/$1/text/$1_text.txt
+#sudo -u www-data /bin/rm -rf /var/www/html/fluxpbx/app/flux_text_speech/recordings/$1/audio/$1.mp3
+
+sudo -u www-data /bin/mkdir -p /var/www/html/fluxpbx/app/flux_text_speech/recordings/$1/text
+sudo -u www-data /bin/mkdir -p /var/www/html/fluxpbx/app/flux_text_speech/recordings/$1/audio
+
+sudo -u www-data /usr/bin/psql -d fluxpbx -U fluxuser -t -c "select flux_text_txt from v_flux_text where flux_text_uuid = '$2'" -o /var/www/html/fluxpbx/app/flux_text_speech/audio/$1/text/$1_text.txt
+
+file1=`cat /var/www/html/fluxpbx/app/flux_text_speech/audio/$1/text/$1_text.txt`
+
+### node text_to_speech.v1.js --text='Teste de Fala' --file=teste
+
+
+#sudo -u www-data /usr/local/bin/node /var/www/html/fluxpbx/app/flux_text_speech/ibm-api/text_to_speech.v1.js --text=$file1 --name=$1
+
+
+sudo -u www-data /usr/bin/curl -vvvv -X POST -u "apikey:smc7hBZbnQusYKDG2ak93zwc_K96rEeQ5FlsDjBDKzsM" --header "Content-Type: application/json" --header "Accept: audio/mp3" --data-urlencode "{\"text\":\"$file1\"}" --output /var/www/html/fluxpbx/app/flux_text_speech/audio/$1/audio/$1.mp3 https://api.us-south.text-to-speech.watson.cloud.ibm.com/instances/fef21bde-7b5c-4914-86b6-332139199d3f/v1/synthesize?voice=pt-BR_IsabelaV3Voice
+
+sleep 5
+
+sudo -u www-data /usr/bin/curl -vvv -X POST -u "apikey:smc7hBZbnQusYKDG2ak93zwc_K96rEeQ5FlsDjBDKzsM" --header "Content-Type: application/json" --header "Accept: audio/basic" --data-urlencode "{\"text\":\"$file1\"}" --output /var/www/html/fluxpbx/app/flux_text_speech/audio/$1/audio/$1.wav https://api.us-south.text-to-speech.watson.cloud.ibm.com/instances/fef21bde-7b5c-4914-86b6-332139199d3f/v1/synthesize?voice=pt-BR_IsabelaV3Voice
+
+sleep 5
+
+sudo -u www-data /bin/cp /var/www/html/fluxpbx/app/flux_text_speech/audio/$1/audio/$1.wav /var/lib/freeswitch/recordings/sbcdev4.flux.net.br/$1.wav
+
+sleep 5
+#INSERT INTO v_recordings ("recording_uuid", "domain_uuid", "recording_filename", "recording_name", "recording_description", "recording_base64") VALUES ('89939705-97ac-408b-b68e-5de61e96fff6', 'f05f378f-5e1c-4445-9e90-b71159910a0c', 'ura-fluxpbx.wav', 'Ura-fluxpbx', 'ura-fluxpbx.wav', NULL);
+
+sudo -u www-data /usr/bin/psql -d fluxpbx -U fluxuser -t -c "insert into ""v_recordings"" (""recording_uuid"", ""domain_uuid"", ""recording_filename"", ""recording_name"", ""recording_description"", ""recording_base64"") VALUES ('$2', '$3', '$1.wav', '$1',NULL, NULL);"

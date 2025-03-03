@@ -1,0 +1,2 @@
+ Olá! Você está em contato com o atendimento automático da Flux Telecom. Como podemos ajudar você hoje? Para informações sobre produtos ou serviços, digite 1. Para suporte técnico, digite 2. Para dúvidas sobre pagamentos ou faturas, digite 3. Para falar com um atendente, digite 4. Se precisar de mais assistência, estamos à disposição. Escolha a opção desejada ou aguarde para ser direcionado a um de nossos atendentes.
+

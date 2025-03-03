@@ -1,0 +1,490 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Cache-Control" content="IE=edge">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="Sat, 01 Jan 2000 00:00:00 GMT">
+  <title>Flux Embeddable</title>
+  <meta name="description" content="Flux Embeddable">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, user-scalable=0, maximum-scale=1, minimum-scale=1"
+  >
+  <style>
+    #appLoading {
+      text-align: center;
+      padding-top: 30px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id='viewport'>
+  
+    <div id="app" class="limiter"></div>
+    <video id="remoteVideo" hidden="hidden"></video>
+    <video id="localVideo" hidden="hidden" muted="muted"></video>
+    <script> 
+    var audio0 = new Audio("https://sbcdev4.flux.net.br/app/flux_phone/assets/audio/wav/0.wav"); 
+    var audio1 = new Audio("https://sbcdev4.flux.net.br/app/flux_phone/assets/audio/wav/1.wav"); 
+    var audio2 = new Audio("https://sbcdev4.flux.net.br/app/flux_phone/assets/audio/wav/2.wav"); 
+    var audio3 = new Audio("https://sbcdev4.flux.net.br/app/flux_phone/assets/audio/wav/3.wav"); 
+    var audio4 = new Audio("https://sbcdev4.flux.net.br/app/flux_phone/assets/audio/wav/4.wav"); 
+    var audio5 = new Audio("https://sbcdev4.flux.net.br/app/flux_phone/assets/audio/wav/5.wav"); 
+    var audio6 = new Audio("https://sbcdev4.flux.net.br/app/flux_phone/assets/audio/wav/6.wav"); 
+    var audio7 = new Audio("https://sbcdev4.flux.net.br/app/flux_phone/assets/audio/wav/7.wav"); 
+    var audio8 = new Audio("https://sbcdev4.flux.net.br/app/flux_phone/assets/audio/wav/8.wav"); 
+    var audio9 = new Audio("https://sbcdev4.flux.net.br/app/flux_phone/assets/audio/wav/9.wav"); 
+    var audio_star = new Audio("https://sbcdev4.flux.net.br/app/flux_phone/assets/audio/wav/star.wav"); 
+    var audio_hash = new Audio("https://sbcdev4.flux.net.br/app/flux_phone/assets/audio/wav/hash.wav"); 
+    var audio_silence = new Audio("https://sbcdev4.flux.net.br/app/flux_phone/assets/audio/wav/silence.wav"); 
+    
+    </script> 
+    <script type="text/html" id="template-addon-phone">
+    <div id="sipPhone" class="container-mobile100">
+    <div class="containerNav">
+    <div class="pos-f-t">
+        <div class="collapse" id="navbarToggleExternalContent">
+          <div class="bg-transparent pb-1 pt-1 mb-1" style="background-color: #e3f2fd;">
+            <div id="sip-log" class="panel panel-default hide">
+              <div id="logPanel" class="panel-heading">
+                <h6 class="text-muted panel-title"><span id="asknotificationpermission" class="asknotificationpermission pull-left"><i class="fa fa-envelope-square text-muted asknotificationpermission" title="Habilitar Notificações" style="cursor: pointer;"></i></span> Chamadas Recentes <span id="sipLogClear" class="sipLogClear pull-right"><i class="fa fa-trash text-muted sipLogClear" title="Limpar Histórico" style="cursor: pointer;"></i></span></h6>
+              </div>
+              <div id="sip-logitems" class="list-group" style="text-align: left; font-size: 12px;">
+                <p class="text-muted text-center">Nenhuma chamada recente.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <div class="clearfix sipStatus">
+        <div id="txtCallStatus" class="txtCallStatus pull-right"></div>
+        <div id="txtRegStatus" class="txtRegStatus pull-left"></div>
+      </div>
+    <div class="form-group" id="phoneUI">
+            <div class="input-group">
+          <input type="text" name="number" id="numDisplay" class="input100 form-control text-center input-sm numDisplay" style="border: none;font-size: 16px;width:100%;" value="" placeholder="Insira o número..." autocomplete="off" />
+            </div>
+            <div class="input-group">
+            <div id="sip-dialpad" class="sip-dialpad">
+            <div class="row">
+              <div class="digit" id="one" data-digit="1">1</div>
+              <div class="digit" id="two" data-digit="2">2<div class="sub">ABC</div>
+              </div>
+              <div class="digit" id="three" data-digit="3">
+                3
+                <div class="sub">DEF</div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="digit" id="four" data-digit="4">
+                4
+                <div class="sub">GHI</div>
+              </div>
+              <div class="digit" id="five" data-digit="5">
+                5
+                <div class="sub">JKL</div>
+              </div>
+              <div class="digit" data-digit="6">
+                6
+                <div class="sub">MNO</div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="digit" data-digit="7">
+                7
+                <div class="sub">PQRS</div>
+              </div>
+              <div class="digit" data-digit="8">
+                8
+                <div class="sub">TUV</div>
+              </div>
+              <div class="digit" data-digit="9">
+                9
+                <div class="sub">WXYZ</div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="digit" data-digit="*">*
+              </div>
+              <div class="digit" data-digit="0">0
+              </div>
+              <div class="digit" data-digit="#">#
+              </div>
+            </div>
+            <div class="botrow">
+            <div id="dnd" class="btnDnd">
+                <i class="fa fa-ban" aria-hidden="true" title="Não perturbe"></i>
+              </div>
+              <div id="call" class="btnCall">
+                <i class="fa fa-phone" aria-hidden="true" title="Discar"></i>
+              </div>
+              <div id="logout" class="btnLogout">
+              <i class="fa fa-sign-out" aria-hidden="true" title="Sair"></i>
+              </div>
+            </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    
+    </script>
+    <script type="text/html" id="template-transfer">
+      <div class="modal fade sizefull" id="mdlTransfer" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-md">
+          <div class="modal-content">
+          <div class="modal-header">
+            <h6 class="modal-title" id="mdlTransfer">Transferência</h6>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+            <div class="modal-body">
+              <form class="form-inline transfer-form" id="transfer-form">
+                <div class="form-group">
+                      
+                <input type="text" id="numTransfer" class="input100 form-control text-center form-control" name="transfer"/>
+              </div>
+            <div class="modal-footer">
+            <button class="btn btn-sm btn-secondary" type="submit">Transferir</button>
+            <button id="transferCancel" class="btn btn-sm btn-danger transferCancel" data-dismiss="modal" style="display: none;" type="button">Cancelar</button>
+            <button id="warm" class="btn btn-sm btn-primary warm" type="button">Discar</button>
+            <button id="complete" class="btn btn-sm btn-success complete" type="button">Completar</button>
+          </div>
+              </form>
+    
+            </div>
+          </div>
+        </div>
+      </div>
+    </script>
+    <script type="text/html" id="template-accepted">
+    
+    </script>
+    <script type="text/html" id="template-error">
+      <div class='modal fade' id='mdlError' tabindex='-1' role='dialog' aria-hidden='true' data-backdrop='static' data-keyboard='false'>
+          <div class='modal-dialog modal-sm'>
+              <div class='modal-content'>
+                  <div class='modal-header' id='mdlErrorHeader'>
+                      <h4 class='modal-title' id='mdlErrorTitle'>Sip Error</h4>
+                  </div>
+                  <div class='modal-body text-center text-danger' id='mdlErrorBody'>
+                      <h3><i class='fa fa-3x fa-ban text-danger'></i></h3>
+                      <p class='lead' id='mdlErrorMsg'>Sip registration failed. No calls can be handled.</p>
+                  </div>
+              </div>
+          </div>
+      </div>
+      
+    </script>
+    <script type="text/html" id="template-agent">
+      <div class="modal fade" id="mdlAgent" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-sm">
+          <div class="modal-content">
+          <div class="modal-header">
+            <h6 class="modal-title" id="mdlAgent"><?php echo "		" . $textuser['description-status'] . "<br />\n";?></h6>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+            <div class="op_ext modal-body">
+              <?php if (is_array($result)) {
+              echo "<form class='form-inline agent-form' id='agent-form'>\n";
+             echo "<div class='input-group'>\n";
+                             echo "	<input type='hidden' id='user_status' name='user_status' value=\"" . escape($_REQUEST['select_user_status']) . "\">\n";
+                             //$cmd = "'" . PROJECT_PATH . "/app/basic_operator_panel/index.php?cmd=status+'+this.value";
+                             echo "		<select id='select_user_status' name='select_user_status' class='formfld' style=''>\n";
+                             echo "			<option value=''></option>\n";
+                             echo "			<option value='Available' " . (($user_status == "Available") ? "selected='selected'" : null) . ">" . $textuser['option-available'] . "</option>\n";
+                             echo "			<option value='Available (On Demand)' " . (($user_status == "Available (On Demand)") ? "selected='selected'" : null) . ">" . $textuser['option-available_on_demand'] . "</option>\n";
+                             echo "			<option value='Logged Out' " . (($user_status == "Logged Out") ? "selected='selected'" : null) . ">" . $textuser['option-logged_out'] . "</option>\n";
+                             echo "			<option value='On Break' " . (($user_status == "On Break") ? "selected='selected'" : null) . ">" . $textuser['option-on_break'] . "</option>\n";
+                             echo "			<option value='Do Not Disturb' " . (($user_status == "Do Not Disturb") ? "selected='selected'" : null) . ">" . $textuser['option-do_not_disturb'] . "</option>\n";
+                             echo "			<option value='On Meeting' " . (($user_status == "On Meeting") ? "selected='selected'" : null) . ">" . $textuser['option-meeting'] . "</option>\n";
+                             echo "			<option value='Lunch' " . (($user_status == "Lunch") ? "selected='selected'" : null) . ">" . $textuser['option-lunch'] . "</option>\n";
+                             echo "			<option value='Snack' " . (($user_status == "Snack") ? "selected='selected'" : null) . ">" . $textuser['option-snack'] . "</option>\n";
+                             echo "			<option value='Bathroom' " . (($user_status == "Bathroom") ? "selected='selected'" : null) . ">" . $textuser['option-bathroom'] . "</option>\n";
+                             
+                             echo "			<option value='Training' " . (($user_status == "Training") ? "selected='selected'" : null) . ">" . $textuser['option-training'] . "</option>\n";
+                             
+                             echo "			<option value='Feedback' " . (($user_status == "Feedback") ? "selected='selected'" : null) . ">" . $textuser['option-feedback'] . "</option>\n";
+                             
+                             echo "		</select>\n";
+                               }
+                               ?>
+                               </div>
+              <div class="modal-footer">
+                     <button class="btn btn-sm btn-secondary agentSubmit" type="submit"><?php echo $text['button-save'];?></button>
+                     <button id="agentCancel" class="btn btn-sm btn-danger agentCancel" data-dismiss="modal" type="button"><?php echo $text['button-cancel'];?></button>
+                   </div>
+                       </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </script>
+    <script type="text/html" id="template-call-log">
+      <div class="modal fade" id="mdlhistory" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+          <div class="modal-header">
+            <h6 class="modal-title" id="mdlhistory"><?php echo "		" . $textcalls['label-recent_calls'] . "<br />\n";?></h6>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+            <div class="op_ext modal-body">
+     <?php
+     			echo "<table class='tr_hover' cellpadding='0' cellspacing='0' border='0'>\n";
+     			echo "<tr>\n";
+     			echo "<th class='hud_heading' width='50%'>".$textcalls['label-direction']."</th>\n";			
+     			echo "<th class='hud_heading' style='text-align: center;' width='50%'>".$textcalls['label-cid_number']."</th>\n";
+     			echo "<th class='hud_heading' style='text-align: center;'>".$textcalls['label-date_time']."</th>\n";
+     			echo "</tr>\n";
+     			if ($num_rows_cdr > 0) {
+     				$theme_cdr_images_exist = (
+     					file_exists($theme_image_path."icon_cdr_inbound_answered.png") &&
+     					file_exists($theme_image_path."icon_cdr_inbound_voicemail.png") &&
+     					file_exists($theme_image_path."icon_cdr_inbound_cancelled.png") &&
+     					file_exists($theme_image_path."icon_cdr_inbound_failed.png") &&
+     					file_exists($theme_image_path."icon_cdr_outbound_answered.png") &&
+     					file_exists($theme_image_path."icon_cdr_outbound_cancelled.png") &&
+     					file_exists($theme_image_path."icon_cdr_outbound_failed.png") &&
+     					file_exists($theme_image_path."icon_cdr_local_answered.png") &&
+     					file_exists($theme_image_path."icon_cdr_local_voicemail.png") &&
+     					file_exists($theme_image_path."icon_cdr_local_cancelled.png") &&
+     					file_exists($theme_image_path."icon_cdr_local_failed.png")
+     					) ? false : true;
+     		
+     				foreach($resultcdr as $index => $rowcdr) {
+     					if ($index + 1 > $recent_limit) { break; } //only show limit
+     					$tmp_year = date("Y", strtotime($rowcdr['start_stamp']));
+     					$tmp_month = date("M", strtotime($rowcdr['start_stamp']));
+     					$tmp_day = date("d", strtotime($rowcdr['start_stamp']));
+     					$tmp_start_epoch = ($_SESSION['domain']['time_format']['text'] == '12h') ? date("n/j g:ia", $rowcdr['start_epoch']) : date("n/j H:i", $rowcdr['start_epoch']);
+     		
+     					//determine name
+     						$cdr_name = ($rowcdr['direction'] == 'inbound' || ($rowcdr['direction'] == 'local' && is_array($assigned_extensions) && in_array($rowcdr['destination_number'], $assigned_extensions))) ? $rowcdr['caller_id_name'] : $rowcdr['destination_number'];
+     					//determine number to display
+     						if ($rowcdr['direction'] == 'inbound' || ($rowcdr['direction'] == 'local' && is_array($assigned_extensions) && in_array($rowcdr['destination_number'], $assigned_extensions))) {
+     							$cdr_number = (is_numeric($rowcdr['caller_id_number'])) ? format_phone($rowcdr['caller_id_number']) : $rowcdr['caller_id_number'];
+     							$dest = $rowcdr['caller_id_number'];
+     						}
+     						else if ($rowcdr['direction'] == 'outbound' || ($rowcdr['direction'] == 'local' && is_array($assigned_extensions) && in_array($rowcdr['caller_id_number'], $assigned_extensions))) {
+     							$cdr_number = (is_numeric($rowcdr['destination_number'])) ? format_phone($rowcdr['destination_number']) : $rowcdr['destination_number'];
+     							$dest = $rowcdr['destination_number'];
+     						}
+     					//set click-to-call variables
+     						if (permission_exists('click_to_call_call')) {
+     							$tr_link = "onclick=\"send_cmd('".PROJECT_PATH."/app/click_to_call/click_to_call.php".
+     								"?src_cid_name=".urlencode($cdr_name).
+     								"&src_cid_number=".urlencode($cdr_number).
+     								"&dest_cid_name=".urlencode($_SESSION['user']['extension'][0]['outbound_caller_id_name']).
+     								"&dest_cid_number=".urlencode($_SESSION['user']['extension'][0]['outbound_caller_id_number']).
+     								"&src=".urlencode($_SESSION['user']['extension'][0]['user']).
+     								"&dest=".urlencode($dest).
+     								"&rec=".(isset($_SESSION['click_to_call']['record']['boolean'])?$_SESSION['click_to_call']['record']['boolean']:"false").
+     								"&ringback=".(isset($_SESSION['click_to_call']['ringback']['text'])?$_SESSION['click_to_call']['ringback']['text']:"us-ring").
+     								"&auto_answer=".(isset($_SESSION['click_to_call']['auto_answer']['boolean'])?$_SESSION['click_to_call']['auto_answer']['boolean']:"true").
+     								"');\" ".
+     								"style='cursor: pointer;'";
+     						}
+     					echo "<tr ".$tr_link.">\n";
+     					//determine call result and appropriate icon
+     						echo "<td class='op_ext_info' style='cursor: help; padding: 0 0 0 6px;'>\n";
+     						if ($theme_cdr_images_exist) {
+     							if ($rowcdr['direction'] == 'inbound' || $rowcdr['direction'] == 'local') {
+     								if ($rowcdr['answer_stamp'] != '' && $rowcdr['bridge_uuid'] != '') { $call_result = 'answered'; }
+     								else if ($rowcdr['answer_stamp'] != '' && $rowcdr['bridge_uuid'] == '') { $call_result = 'voicemail'; }
+     								else if ($rowcdr['answer_stamp'] == '' && $rowcdr['bridge_uuid'] == '' && $rowcdr['sip_hangup_disposition'] != 'send_refuse') { $call_result = 'cancelled'; }
+     								else { $call_result = 'failed'; }
+     							}
+     							else if ($rowcdr['direction'] == 'outbound') {
+     								if ($rowcdr['answer_stamp'] != '' && $rowcdr['bridge_uuid'] != '') { $call_result = 'answered'; }
+     								else if ($rowcdr['answer_stamp'] == '' && $rowcdr['bridge_uuid'] != '') { $call_result = 'cancelled'; }
+     								else { $call_result = 'failed'; }
+     							}
+     							if (isset($rowcdr['direction'])) {
+     								echo "<img src='".PROJECT_PATH."/themes/".$_SESSION['domain']['template']['name']."/images/icon_cdr_".$rowcdr['direction']."_".$call_result.".png' width='12' style='border: none;' title='".$textcalls['label-'.$rowcdr['direction']].": ".$textcalls['label-'.$call_result]."'>".$textcalls['label-'.$rowcdr['direction']]."\n";
+     							}
+     						}
+     						echo "</td>\n";
+     						echo "<td valign='top' class='op_ext_info hud_text' nowrap='nowrap'><a href='javascript:void(0);' ".(($cdr_name != '') ? "title=\"".$cdr_name."\"" : null).">".$cdr_number."</a></td>\n";
+     						echo "<td valign='top' class='op_ext_info hud_text' nowrap='nowrap'>".$tmp_start_epoch."</td>\n";
+     					echo "</tr>\n";
+     		
+     					unset($cdr_name, $cdr_number);
+     					$c = ($c) ? 0 : 1;
+     				}
+     			}
+     			unset($sqlcdr, $parameterscdr, $resultcdr, $num_rows_cdr, $index, $rowcdr);
+     			echo "</table>\n";
+     			$n++;
+     ?>
+            </div>
+          </div>
+        </div>
+      </div>
+    </script>
+    <script type="text/html" id="template-incoming">
+         <div class='modal fade' id='mdlInvite' tabindex='-1' role='dialog' aria-hidden='true' data-backdrop='static'>
+            <div class='modal-dialog'>
+                <div class='modal-content'>
+                    <div class='modal-header'>
+                        <h6 class='modal-title'>Chamada de Entrada</h6>
+                        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+                          <span aria-hidden='true'>&times;</span>
+                        </button>
+                    </div>
+                    <div class='modal-body'>
+                        <form class='form-inline forward-form'>
+                <div class='wrap-input100 validate-input m-b-16 form-group' data-validate=''>
+                 <label>Encaminhar Chamada:</label>
+                   <input type='text' name='forward' id='forward' class='input100 form-control text-center input-sm' placeholder='Inserir o número para encaminhar' autocomplete='off' />
+                  <span class='focus-input100'></span>
+                </div>
+                <div class='container-login100-form-btn p-t-15'>
+                  <button class='btn btn-primary' type='submit'>
+                  Enviar
+                  </button>
+                </div>
+                        </form>
+                    </div>
+                    <div class='modal-footer before-answer'>
+                        <button class='btn btn-success answer'>Atender</button>
+                        <button class='btn btn-danger decline'>Rejeitar</button>
+                       <button class='btn btn-warning toVoicemail'>Caixa Postal</button>
+                    </div>
+                    <div class='modal-footer answered' style='display: none'>Conectando...</div>
+                </div>
+            </div>
+        </div>
+    
+    </script>
+    
+      
+
+<div id='cmd_reponse_agent' style='display: none;'></div>
+<audio id="ringtone" src="/app/flux_phone/assets/audio/ogg/ringtone_in.ogg" loop></audio>
+<audio id="dtmfTone" src="/app/flux_phone/assets/audio/mp3/dtmf.mp3"></audio>
+<audio id="audioRemote"></audio>
+<script src="/app/flux_phone/assets/js/jquery-3.3.1.slim.min.js"></script>
+
+<script type="text/javascript" src="/app/flux_phone/prod/assets/js/mdb.min.js"></script>
+<script src="/app/flux_phone/prod/assets/js/core/popper.min.js"></script>
+<script src="/app/flux_phone/prod/assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="/app/flux_phone/prod/assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script src="/app/flux_phone/prod/assets/js/plugins/bootstrap-notify.js"></script>
+<script type="text/javascript" src="/app/flux_phone/assets/js/moment.min.js"></script>
+<script type="text/javascript" src="/app/flux_phone/assets/js/pt-br.js"></script>
+<script src="/resources/datatables/datatables/jquery.dataTables.min.js"></script>
+<script src="/resources/datatables/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/resources/datatables/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/resources/datatables/datatables-responsive/js/dataTables.responsive.min.js"></script>
+
+
+  </div>
+ <script>
+  function loadScript(url) {
+  	return new Promise(function(resolve, reject) {
+  		let script = document.createElement('script');
+  		script.src = url;
+  		script.async = false;
+  		script.onload = function() {
+  			resolve(url);
+  		};
+  		script.onerror = function() {
+  			reject(url);
+  		};
+  		document.body.appendChild(script);
+  	});
+  }
+  
+  let scripts = [
+  				'https://sbcdev4.flux.net.br/app/flux_phone/assets/js/fluxPhone.js',
+  				'https://sbcdev4.flux.net.br/app/flux_phone/google/app.js',
+  				'https://sbcdev4.flux.net.br/app/flux_phone/assets/js/flux.js',
+  				'https://sbcdev4.flux.net.br/app/flux_phone/assets/js/flux-web-phone.js'
+  			];
+  
+  // save all Promises as array
+  let promises = [];
+  scripts.forEach(function(url) {
+  	promises.push(loadScript(url));
+  });
+  
+  Promise.all(promises)
+  .then(function() {
+  	console.log('all scripts loaded');
+  }).catch(function(script) {
+  	console.log(script + ' failed to load');
+  });
+     var registered = false;
+  window.addEventListener('message', function(event) {
+    var message = event.data;
+    if (!registered && message && message.type === 'flux-ev-init') {
+      registered = true;
+      clickToDialContactDetails = true;
+      FluxAdapter.registerService({
+        name: 'Google',
+        callLoggerEnabled: true,
+        contactMatcherEnabled: true,
+      });
+      FluxAdapter.transport.addListeners({
+        push: function (data) { // listen push event from rc widget
+          // new call event
+          if (data.type === 'flux-register-service') {
+            console.log('new call:', data.call);
+          }
+        },
+        request: function (req) { // listen request event from rc widget
+          var payload = req.payload;
+          // handle log request
+          if (payload.requestType === 'flux-adapter-logCall') {
+            console.log('logCall:', payload.data);
+            FluxAdapter.transport.response({
+              requestId: req.requestId,
+              result: 'ok',
+            });
+            return;
+          }
+          // handle match contacts request
+          if (payload.requestType === 'flux-adapter-matchContacts') {
+            var queries = payload.data;
+            console.log('matchContacts:', queries);
+            var contactMapping = {};
+            queries.forEach(function (query) {
+              contactMapping[query.phoneNumber] = [{
+                id: query.phoneNumber,
+                type: 'Google',
+                name: 'Test User ' + query.phoneNumber,
+                phoneNumbers: [{
+                  phoneNumber: query.phoneNumber,
+                  phoneType: 'direct',
+                }]
+              }]; // Array
+            });
+            FluxAdapter.transport.response({
+              requestId: req.requestId,
+              result: contactMapping,
+            });
+            return;
+          }
+        }
+      });
+    }
+  });
+  </script>
+  
+  <!--<script type="text/javascript" src="flux.js"></script>
+  <script type="text/javascript" src="fluxPhone.js"></script>
+  <script type="text/javascript" src="flux-web-phone.js"></script>-->
+  <script>
+  window.onload = function(){
+    console.log('Onload disparado');
+  }
+  </script>
+</body>
+</html>

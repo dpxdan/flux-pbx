@@ -1,0 +1,184 @@
+body {
+/*margin-top       : 20px;
+  background-image: url('./images/flux_girl.png');
+  background-position: right; 
+  background-repeat: no-repeat;*/
+  
+}
+
+.sipStatus {
+  margin: 0 -15px 15px -15px;
+  padding: 5px 15px;
+/*  background-color: #111;*/
+  color: #111;
+}
+.txtCallStatus {
+  color: #111;
+}
+
+.row {
+  margin: 0 auto;
+ /* width: 280px;*/
+  clear: both;
+  text-align: center;
+  font-family: 'Exo';
+}
+
+.digit{
+  float: left;
+  padding: 10px 30px;
+  width: 30px;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+.sub {
+  font-size: 0.8rem;
+  color: grey;
+}
+
+.container {
+  background-color: white;
+  width: 320px;
+  padding: 20px;
+  margin: 30px auto;
+  height: auto;
+  text-align: center;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
+
+.containerNav {
+  background-color: white;
+  width: 320px;
+  padding: 20px;
+  margin: 30px auto;
+  height: 470px;
+  text-align: center;
+  /*box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);*/
+}
+
+.output {
+  font-family: "Exo";
+  font-size: 2rem;
+ /* height: 60px;*/
+ height: 30px;
+  font-weight: bold;
+  color: #1976d2;
+}
+
+#numDisplay {
+  font-family: "Exo";
+  font-size: 2rem;
+   /* height: 60px;*/
+ height: 40px;
+  font-weight: bold;
+  color: #1976d2;
+}
+
+#sip-dialpad {
+  width: 292px;
+  /*padding: 16px 20px;*/
+  padding: 5px 36px;
+}
+
+/*#sipClient #sip-dialpad {
+  width: 292px;
+  padding: 16px 20px;
+}*/
+
+#sipClient #sldVolume {
+  width: 140px;
+  margin: 0 auto;
+  box-shadow: none;
+}
+
+#sipClient .sip-panel h3 {
+  margin-top: 22px;
+}
+#sipClient #sip-splash {
+  height: 371px;
+}
+#sipClient #sip-splash .fa {
+  margin-bottom: 15px;
+}
+#sipClient #sip-splash .fa-circle {
+  color: #5cb85c;
+}
+#sipClient #sip-log .panel-heading {
+ /* padding: 10px 8px;*/
+}
+#sipClient #sip-logitems {
+  height: auto;
+  overflow: auto;
+}
+#sipClient #sldVolume {
+  width: 140px;
+  margin: 0 auto;
+  box-shadow: none;
+}
+#sipClient .sip-logitem {
+  padding: 4px;
+}
+
+#call {
+  display: inline-block;
+  background-color: #66bb6a;
+  padding: 4px 30px;
+  margin: 10px;
+  color: white;
+  border-radius: 4px;
+  float: left;
+  cursor: pointer;
+}
+
+.botrow {
+  margin: 0 auto;
+  width: 280px;
+  clear: both;
+  text-align: center;
+  font-family: 'Exo';
+}
+
+.digit:active,
+.dig:active {
+  background-color: #e6e6e6;
+}
+
+#call:hover {
+  background-color: #81c784;
+}
+
+.dig {
+  float: left;
+  /*padding: 10px 20px;*/
+  padding: 10px 18px;
+  margin: 10px;
+  width: 30px;
+  cursor: pointer;
+}
+
+.numDisplay::-webkit-input-placeholder {
+  color: #bbb;
+}
+.numDisplay::-moz-placeholder {
+  color: #bbb;
+}
+.numDisplay::-ms-input-placeholder {
+  color: #bbb;
+}
+.numDisplay::-moz-placeholder {
+  color: #bbb;
+}
+
+#sipClient #numDisplay::-webkit-input-placeholder {
+  color: #bbb;
+}
+#sipClient #numDisplay::-moz-placeholder {
+  color: #bbb;
+}
+#sipClient #numDisplay::-ms-input-placeholder {
+  color: #bbb;
+}
+#sipClient #numDisplay::-moz-placeholder {
+  color: #bbb;
+}

@@ -1,0 +1,451 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+          "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>QUnit for 'base64x.js' and 'ext/base64.js'</title>
+<meta charset='utf-8' />
+<script type="text/javascript" src="jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="qunit.js"></script>
+<link rel="stylesheet" href="qunit.css" type="text/css" media="screen" />
+<!-- tom wo's -->
+<script src="../ext/base64.js"></script>
+<script src="../ext/jsbn.js"></script>
+<!-- jsrsasign -->
+<script src="../src/base64x-1.1.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+
+test("hextorstr", function() {
+  expect(2);
+  equal(hextorstr("616161"), "aaa", "aaa");
+  equal(hextorstr("00010203"), "\x00\x01\x02\x03", "\\x00\\x01\\x02\\x03");
+});
+
+test("rstrtohex", function() {
+  expect(2);
+  equal(rstrtohex("aaa"), "616161", "aaa");
+  equal(rstrtohex("\x00\x01\x02\x03"), "00010203", "00010203");
+});
+
+test("hextob64u", function() {
+  equal(hextob64u("10001"), "AQAB", "10001");
+  equal(hextob64u("010001"), "AQAB", "010001");
+});
+
+test("intarystrtohex", function() {
+  equal(intarystrtohex('  [123, 34, 101, 34, 58, 34, 65] '), 
+        '7b2265223a2241', 'rfc7638 sample {"e":"A');
+  equal(intarystrtohex('  [55, 54, 203, 177, 120, 124 ]  '),
+        '3736cbb1787c', 'rfc7638 sample hash');
+});
+
+test("hextob64", function() {
+  equal(hextob64("61"), "YQ==", "a");
+  equal(hextob64("6161"), "YWE=", "aa");
+  equal(hextob64("616161"), "YWFh", "aaa");
+  equal(hextob64("61616161"), "YWFhYQ==", "aaaa");
+  equal(hextob64("6161616161"), "YWFhYWE=", "aaaaa");
+  equal(hextob64("616161616161"), "YWFhYWFh", "aaaaaa");
+
+  // _gitpg/jsrsasign/test/eckey/k1.*
+  equal(hextob64("3059301306072a8648ce3d020106082a8648ce3d03010703420004a01532a3c0900053de60fbefefcca58793301598d308b41e6f4e364e388c2711bef432c599148c94143d4ff46c2cb73e3e6a41d7eef23c047ea11e60667de425"), "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEoBUyo8CQAFPeYPvv78ylh5MwFZjTCLQeb042TjiMJxG+9DLFmRSMlBQ9T/RsLLc+PmpB1+7yPAR+oR5gZn3kJQ==", "ec key");
+
+  // _gitpg/jsrsasign/test/eckey/k1.pub
+  equal(hextob64("305c300d06092a864886f70d0101010500034b003048024100e8664dd2b40529121568f3b39bc97a62e7ba3c09babdc4f0dcd8df90eb790b9bb645a2b70e3112747b4d3c41b51424895115fef88f79d43eae5b1a4e3518fd590203010001"), "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAOhmTdK0BSkSFWjzs5vJemLnujwJur3E8NzY35DreQubtkWitw4xEnR7TTxBtRQkiVEV/viPedQ+rlsaTjUY/VkCAwEAAQ==", "k1 pub");
+});
+
+test("b64utohex", function() {
+  equal(b64utohex("MEUCIQD4rwV75OAQfwqRlpBIlTblPdG3XFrxcTRsYHJkzDmemQIgQyV-3QfkSmM1rQf4lFUC3DKIDfTJKjJCR8e4zvIUYf0"), 
+    "3045022100f8af057be4e0107f0a919690489536e53dd1b75c5af171346c607264cc399e99022043257edd07e44a6335ad07f8945502dc32880df4c92a324247c7b8cef21461fd", 
+    "123");
+});
+
+test("utf8tob64u", function() {
+equal(utf8tob64u("あ"), "44GC", "あ");
+equal(utf8tob64u("aaa"), "YWFh", "aaa");
+});
+
+test("b64utoutf8", function() {
+equal(b64utoutf8("44GC"), "あ", "あ");
+equal(b64utoutf8("YWFh"), "aaa", "aaa");
+});
+
+test("hextoutf8", function() {
+equal(hextoutf8("e88ab1"), "花", "e88ab1 > 花");
+equal(hextoutf8("9301"), null, "9301 > null");
+});
+
+test("utf8tohex", function() {
+equal(utf8tohex("花"), "e88ab1", "花 > e88ab1");
+});
+
+// == iso88591hextoutf8/utf8toiso88591hex ============
+test("iso88591hextoutf8", function() {
+equal(iso88591hextoutf8("41a9fa"), "A©ú", "41a9fa > A©ú");
+equal(iso88591hextoutf8("616161"), "aaa", "616161 > aaa");
+});
+
+test("utf8toiso88591hex", function() {
+equal(utf8toiso88591hex("A©ú"), "41a9fa", "A©ú > 41a9fa");
+equal(utf8toiso88591hex("aaa"), "616161", "aaa > 616161");
+});
+
+// == iso88591hextoutf8hex/utf8hextoiso88591hex ======
+test("iso88591hextoutf8hex", function() {
+equal(iso88591hextoutf8hex("41a9fa"), "41c2a9c3ba", "41a9fa > 41c2a8c3ba");
+equal(iso88591hextoutf8hex("616161"), "616161", "616161 > 616161");
+});
+
+test("utf8hextoiso88591hex", function() {
+equal(utf8hextoiso88591hex("41c2a9c3ba"), "41a9fa", "41c2a8c3ba > 41a9fa");
+equal(utf8hextoiso88591hex("616161"), "616161", "616161 > 616161");
+});
+
+// ===================================================
+test("KJUR.lang.String.isInteger", function() {
+equal(KJUR.lang.String.isInteger("123"), true, "123");
+equal(KJUR.lang.String.isInteger("-123"), true, "-123");
+equal(KJUR.lang.String.isInteger("abc"), false, "abc");
+equal(KJUR.lang.String.isInteger("0"), true, "0");
+});
+
+test("KJUR.lang.String.isHex", function() {
+equal(KJUR.lang.String.isHex("123"), false, "123");
+equal(KJUR.lang.String.isHex("1234"), true, "1234");
+equal(KJUR.lang.String.isHex("az12"), false, "az12");
+equal(KJUR.lang.String.isHex("az1%"), false, "az1%");
+});
+
+test("KJUR.lang.String.isBase64", function() {
+  equal(KJUR.lang.String.isBase64("YQ=="), true, "YQ==");
+  equal(KJUR.lang.String.isBase64("a"), false, "a");
+  equal(KJUR.lang.String.isBase64("Y_=="), false, "Y_==");
+  equal(KJUR.lang.String.isBase64("Y+=="), true, "Y+==");
+});
+
+test("KJUR.lang.String.isBase64URL", function() {
+  equal(KJUR.lang.String.isBase64URL("YQ"), true, "YQ");
+  equal(KJUR.lang.String.isBase64URL("YWE"), true, "YWE");
+  equal(KJUR.lang.String.isBase64URL("YW_"), true, "YW_");
+  equal(KJUR.lang.String.isBase64URL("YW-"), true, "YW-");
+  equal(KJUR.lang.String.isBase64URL("Y+"), false, "Y+");
+  equal(KJUR.lang.String.isBase64URL("Y/"), false, "Y/");
+  equal(KJUR.lang.String.isBase64URL("Y=a"), false, "Y=a");
+  equal(KJUR.lang.String.isBase64URL("Y%%"), false, "Y%%");
+});
+
+test("KJUR.lang.String.isIntegerArray", function() {
+  equal(KJUR.lang.String.isIntegerArray("[1,3,4]"), true, "[1,3,4]");
+  equal(KJUR.lang.String.isIntegerArray(" [1, 3, 4]   "), true, " [1, 3, 4]   with space chars");
+  equal(KJUR.lang.String.isIntegerArray("[[1,3,4]"), false, "[[1,3,4]");
+  equal(KJUR.lang.String.isIntegerArray("[a,3,4]"), false, "[a,3,4]");
+});
+
+test("KJUR.lang.String.isPrintable test", function() {
+var _isPrintable = KJUR.lang.String.isPrintable;
+equal(_isPrintable("abc"), true, "abc > true");
+equal(_isPrintable("abc@"), false, "abc@ > false");
+equal(_isPrintable("あいう"), false, "あいう > false");
+equal(_isPrintable("abc_"), false, "abc_ > false");
+});
+
+test("KJUR.lang.String.isIA5 test", function() {
+var _isIA5 = KJUR.lang.String.isIA5;
+equal(_isIA5("abc"), true, "abc > true");
+equal(_isIA5("abc@"), true, "abc@ > true");
+equal(_isIA5('"abc"'), false, '"abc" > false');
+equal(_isIA5("あいう"), false, "あいう > false");
+});
+
+test("KJUR.lang.String.isMail test", function() {
+var _isMail = KJUR.lang.String.isMail;
+equal(_isMail("abc"), false, "abc > false");
+equal(_isMail("abc@"), false, "abc@ > false");
+equal(_isMail("abc@example"), false, "abc@example > false");
+equal(_isMail("abc@example.com"), true, "abc@example.com > true");
+equal(_isMail("abc-1@example.com"), true, "abc-1@example.com > true");
+equal(_isMail("abc_2@example.com"), true, "abc_2@example.com > true");
+equal(_isMail("あいう"), false, "あいう > false");
+});
+
+test("hextoArrayBuffer", function() {
+  var a = new Uint8Array(hextoArrayBuffer("00010203ff"));
+  equal(a[0], 0, "00010203ff 0");
+  equal(a[1], 1, "00010203ff 1");
+  equal(a[2], 2, "00010203ff 2");
+  equal(a[3], 3, "00010203ff 3");
+  equal(a[4], 255, "00010203ff 4");
+});
+
+test("ArrayBuffertohex", function() {
+  var buffer = new ArrayBuffer(5);
+  var view = new DataView(buffer);
+  view.setUint8(0, 0xfa);
+  view.setUint8(1, 0xfb);
+  view.setUint8(2, 0xfc);
+  view.setUint8(3, 0x01);
+  view.setUint8(4, 0x02);
+  equal(ArrayBuffertohex(buffer), "fafbfc0102", "fafbfc0102");
+});
+
+test("zulutomsec", function() {
+equal(zulutomsec("071231235959Z"), 1199145599000, "071231235959Z");
+equal(zulutomsec("071231235959.345Z"), 1199145599345, "071231235959.345Z");
+equal(zulutomsec("931231235959.345Z"), 757382399345, "931231235959.345Z");
+equal(zulutomsec("20071231235959.345Z"), 1199145599345, "20071231235959.345Z");
+equal(zulutomsec("561231235959Z"), -410227201000, "561231235959Z");
+});
+
+test("zulutosec", function() {
+equal(zulutosec("071231235959Z"), 1199145599, "071231235959Z");
+equal(zulutosec("071231235959Z"), 1199145599, "071231235959.345Z");
+equal(zulutosec("931231235959Z"), 757382399, "931231235959.345Z");
+equal(zulutosec("20071231235959Z"), 1199145599, "20071231235959.345Z");
+equal(zulutosec("561231235959Z"), -410227201, "561231235959Z");
+equal(zulutosec("401231235959Z"), 2240611199, "401231235959Z");
+equal(zulutosec("401231235959.8Z"), 2240611200, "401231235959.8Z");
+});
+
+test("zulutodate", function() {
+equal(zulutodate("071231235959Z").toUTCString(),       "Mon, 31 Dec 2007 23:59:59 GMT", "071231235959Z");
+equal(zulutodate("071231235959.345Z").toUTCString(),   "Mon, 31 Dec 2007 23:59:59 GMT", "071231235959.345Z");
+equal(zulutodate("931231235959Z").toUTCString(),       "Fri, 31 Dec 1993 23:59:59 GMT", "931231235959Z");
+equal(zulutodate("931231235959.345Z").toUTCString(),   "Fri, 31 Dec 1993 23:59:59 GMT", "931231235959.345Z");
+equal(zulutodate("20071231235959Z").toUTCString(),     "Mon, 31 Dec 2007 23:59:59 GMT", "20071231235959Z");
+equal(zulutodate("20071231235959.345Z").toUTCString(), "Mon, 31 Dec 2007 23:59:59 GMT", "20071231235959.345Z");
+equal(zulutodate("561231235959Z").toUTCString(),       "Mon, 31 Dec 1956 23:59:59 GMT", "561231235959Z");
+equal(zulutodate("071231235959.34Z").getMilliseconds(), 340, "071231235959.34Z");
+});
+
+test("datetozulu", function() {
+var d = new Date(Date.UTC(2017,4,20,23,59,59,670));
+equal(datetozulu(d), "20170520235959Z", "GenTime");
+equal(datetozulu(d, true), "170520235959Z", "UTCTime");
+equal(datetozulu(d, false, true), "20170520235959.67Z", "GenTime with milli");
+});
+
+test("pemtohex", function() {
+  // _data/z0512.pub.p8
+  var pem = "" +
+    "-----BEGIN PUBLIC KEY-----\r\n" +
+    "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBALmwAylQX+LtYOxWid3N9blNBatBbhZD\r\n" +
+    "sco/lvxHLusfYu1HaJfxWa6Yt/Ot7Ox5cd619k2aJZAcTcekl3LloCsCAwEAAQ==\r\n" +
+    "-----END PUBLIC KEY-----\r\n";
+  var hex = "305c300d06092a864886f70d0101010500034b003048024100b9b00329505fe2ed60ec5689ddcdf5b94d05ab416e1643b1ca3f96fc472eeb1f62ed476897f159ae98b7f3adecec7971deb5f64d9a25901c4dc7a49772e5a02b0203010001";
+  equal(pemtohex(pem), hex, "pem");
+  equal(pemtohex("  " + pem + "  \r\n"), hex, "pem with spaces");
+  equal(pemtohex(pem, "PUBLIC KEY"), hex, "pem with specifying header");
+});
+
+test("pemtohex multi section EC PRIVATE KEY PEM", function() {
+// _test/0cert_ec/k1.prv.p5p.pem
+var K1PRVP5PPEM = (function() {/*
+-----BEGIN EC PARAMETERS-----
+BggqhkjOPQMBBw==
+-----END EC PARAMETERS-----
+-----BEGIN EC PRIVATE KEY-----
+MHcCAQEEIBG1c3z52T8XwMsahGVdOZWgKCQJfv+l7djuJjgetdbDoAoGCCqGSM49
+AwEHoUQDQgAEoBUyo8CQAFPeYPvv78ylh5MwFZjTCLQeb042TjiMJxG+9DLFmRSM
+lBQ9T/RsLLc+PmpB1+7yPAR+oR5gZn3kJQ==
+-----END EC PRIVATE KEY-----
+*/}).toString().match(/\/\*([^]*)\*\//)[1];
+
+equal(pemtohex(K1PRVP5PPEM, "EC PRIVATE KEY"), "3077020101042011b5737cf9d93f17c0cb1a84655d3995a02824097effa5edd8ee26381eb5d6c3a00a06082a8648ce3d030107a14403420004a01532a3c0900053de60fbefefcca58793301598d308b41e6f4e364e388c2711bef432c599148c94143d4ff46c2cb73e3e6a41d7eef23c047ea11e60667de425", "k1.prv.p5p.pem=3077...");
+});
+
+test("ipv6tohex", function() {
+  equal(ipv6tohex('2001:db8:0:1:0:1:9d6:8'),
+        '20010db8000000010000000109d60008',
+        '2001 0db8 0000 0001 0000 0001 09d6 0008 < 2001:db8:0:1:0:1:9d6:8');
+  equal(ipv6tohex('2001:db8::2:1'),
+        '20010db8000000000000000000020001',
+        '2001 0db8 0000 0000 0000 0000 0002 0001 < 2001:db8::2:1');
+  equal(ipv6tohex('2001:db8:0:1:1:0:1:1'),
+        '20010db8000000010001000000010001',
+        '2001 0db8 0000 0001 0001 0000 0001 0001 < 2001:db8:0:1:1:0:1:1');
+  equal(ipv6tohex('2001:0:0:1::1'),
+        '20010000000000010000000000000001',
+        '2001 0000 0000 0001 0000 0000 0000 0001 < 2001:0:0:1::1');
+  equal(ipv6tohex('2001:DB8::ABCD:EF12'),
+        '20010db80000000000000000abcdef12',
+        '2001 0db8 0000 0000 0000 0000 abcd ef12 < 2001:DB8::ABCD:EF12');
+});
+
+test("hextoipv6", function() {
+  equal(hextoipv6('20010db8000000010000000109d60008'),
+        '2001:db8:0:1:0:1:9d6:8',
+        '2001 0db8 0000 0001 0000 0001 09d6 0008 > 2001:db8:0:1:0:1:9d6:8');
+  equal(hextoipv6('20010db8000000000000000000020001'),
+        '2001:db8::2:1',
+        '2001 0db8 0000 0000 0000 0000 0002 0001 > 2001:db8::2:1');
+  equal(hextoipv6('20010db8000000010001000000010001'),
+        '2001:db8:0:1:1:0:1:1',
+        '2001 0db8 0000 0001 0001 0000 0001 0001 > 2001:db8:0:1:1:0:1:1');
+  equal(hextoipv6('20010000000000010000000000000001'),
+        '2001:0:0:1::1',
+        '2001 0000 0000 0001 0000 0000 0000 0001 > 2001:0:0:1::1');
+  equal(hextoipv6('20010db80000000000000000abcdef12'),
+        '2001:db8::abcd:ef12',
+        '2001 0db8 0000 0000 0000 0000 abcd ef12 > 2001:db8::abcd:ef12');
+  equal(hextoipv6('26064700470000000000000000001111'), // cloudflare 1.1.1.1
+        '2606:4700:4700::1111',
+        '2606 4700 4700 0000 0000 0000 0000 1111 > 2606:4700:4700::1111 cloudflare');
+  equal(hextoipv6('00000000000000000000ffff0ac6cbb1'), // issue 536
+        '::ffff:ac6:cbb1',
+        '0000 0000 0000 0000 0000 ffff 0ac6 cbb1 > ::ffff:ac6:cbb1')
+  equal(hextoipv6('ffff0ac6cbb100000000000000000000'),
+        'ffff:ac6:cbb1::',
+        'ffff 0ac6 cbb1 0000 0000 0000 0000 0000 > ffff:ac6:cbb1::')
+});
+
+test("hextoip", function() {
+  equal(hextoip('20010db8000000010000000109d60008'),
+        '2001:db8:0:1:0:1:9d6:8',
+        '2001:db8:0:1:0:1:9d6:8');
+  equal(hextoip('20010db8000000000000000000020001'),
+        '2001:db8::2:1',
+        '2001:db8::2:1');
+  equal(hextoip('20010db8000000010001000000010001'),
+        '2001:db8:0:1:1:0:1:1',
+        '2001:db8:0:1:1:0:1:1');
+  equal(hextoip('20010000000000010000000000000001'),
+        '2001:0:0:1::1',
+        '2001:0:0:1::1');
+  equal(hextoip('20010db80000000000000000abcdef12'),
+        '2001:db8::abcd:ef12',
+        '2001:db8::abcd:ef12');
+  equal(hextoip('c0a80101'),
+        '192.168.1.1',
+        'c0a80101=192.168.1.1');
+  equal(hextoip('123456abcd'),
+        '123456abcd',
+        '123456abcd');
+
+equal(hextoip("c0a80101ffffff00"), "192.168.1.1/24",  "c0a80101ffffff00 > 192.168.1.1/24");
+equal(hextoip("c0a80101ffffffff"), "192.168.1.1/32",  "c0a80101ffffffff > 192.168.1.1/32");
+equal(hextoip("20010db80000000000000000abcdef12ffffffffffffffffffffffffffffff00"),
+	      "2001:db8::abcd:ef12/120", "2001:db8::abcd:ef12/120");
+equal(hextoip("20010db80000000000000000abcdef12ffffffffffffffffffffffffffffffff"),
+	      "2001:db8::abcd:ef12/128", "2001:db8::abcd:ef12/128");
+});
+
+test("iptohex", function() {
+equal(iptohex('192.168.1.1'), 'c0a80101', 'c0a80101=192.168.1.1');
+equal(iptohex('192.168.1.10'), 'c0a8010a', 'c0a8010a=192.168.1.10');
+equal(iptohex('2001:db8::abcd:ef12'),
+      '20010db80000000000000000abcdef12',
+      '2001:db8::abcd:ef12');
+equal(iptohex("192.168.1.1/32"), 'c0a80101ffffffff', "192.168.1.1/32");
+equal(iptohex("192.168.1.1/24"), 'c0a80101ffffff00', "192.168.1.1/24");
+equal(iptohex("2001:db8::abcd:ef12/120"),
+      "20010db80000000000000000abcdef12ffffffffffffffffffffffffffffff00",
+      "2001:db8::abcd:ef12/120");
+equal(iptohex("2001:db8::abcd:ef12/128"),
+      "20010db80000000000000000abcdef12ffffffffffffffffffffffffffffffff",
+      "2001:db8::abcd:ef12/128");
+
+//equal(ipnetmask(24, 32), "ffffff00", "24,32 > ffffff00");
+//equal(ipnetmask(32, 32), "ffffffff", "32,32 > ffffffff");
+//equal(ipnetmask(120, 128), "ffffffffffffffffffffffffffffff00", "120,128 > ffffffffffffffffffffffffffffff00");
+//equal(ipnetmask(128, 128), "ffffffffffffffffffffffffffffffff", "128,128 > ffffffffffffffffffffffffffffffff");
+});
+
+test("ucs2hextoutf8", function() {
+equal(ucs2hextoutf8('006600fc0072'), 'für', 'für');
+});
+
+test("oidtohex", function() {
+equal(oidtohex("2.16.840.1.101.3.4.2.1"), "608648016503040201", "sha256");
+equal(oidtohex("1.2.840.113549.1.1.5"), "2a864886f70d010105", "SHA1withRSA");
+equal(oidtohex("2.5.4.6"), "550406", "2.5.4.6=550406");
+equal(oidtohex("2.5.12345"), "55e039", "2.5.12345=55e039");
+equal(oidtohex("2.5.b30="), null, "2.5.b30==null");
+});
+
+test("hextooid", function() {
+equal(hextooid("608648016503040201"), "2.16.840.1.101.3.4.2.1", "sha256");
+equal(hextooid("2a864886f70d010105"), "1.2.840.113549.1.1.5", "SHA1withRSA");
+equal(hextooid("=-=-"), null, "=-=- > null");
+});
+
+test("strpad test", function() {
+equal(strpad("1234", 10, "0"), "0000001234", "1234 10 0");
+equal(strpad("1234", 10, " "), "      1234", "1234 10 _");
+equal(strpad("1234", 10), "0000001234", "1234 10");
+equal(strpad("1234", 3), "1234", "1234 3");
+});
+
+test("bitstrtoint test", function() {
+equal(bitstrtoint("0700"), 0, "0700 > 0");
+equal(bitstrtoint("0780"), 1, "0780 > 1");
+equal(bitstrtoint("0680"), 2, "0680 > 2");
+equal(bitstrtoint("06c0"), 3, "06c0 > 3");
+equal(bitstrtoint("04b0"), 11, "04b0 > 11");
+equal(bitstrtoint("03c8"), 25, "03c8 > 25");
+equal(bitstrtoint("02fff8"), 16382, "02ff8 > 16382");
+equal(bitstrtoint("02fffc"), 16383, "02ffc > 16383");
+equal(bitstrtoint("ff"), -1, "hoge");
+});
+
+test("inttobitstr test", function() {
+equal(inttobitstr(0), "0700", "0 > 0700");
+equal(inttobitstr(1), "0780", "1 > 0780");
+equal(inttobitstr(2), "0680", "2 > 0680");
+equal(inttobitstr(3), "06c0", "3 > 06c0");
+equal(inttobitstr(11), "04b0", "11 > 04b0");
+equal(inttobitstr(25), "03c8", "25 > 03c8");
+equal(inttobitstr(16382), "02fff8", "16382 > 02fff8");
+equal(inttobitstr(16383), "02fffc", "16383 > 02fffc");
+});
+
+test("bitstrtobinstr test", function() {
+equal(bitstrtobinstr("05a0"), "101", "05a0 > 101");
+equal(bitstrtobinstr("0520"), "001", "0520 > 001");
+equal(bitstrtobinstr("0400000010"), "0000000000000000000000000001", "03050400000010 > 0..1");
+equal(bitstrtobinstr("07a080"), "101000001", "07a080 > 101000001");
+equal(bitstrtobinstr("0"), null, "0 > null");
+equal(bitstrtobinstr("ff"), null, "ff > null");
+equal(bitstrtobinstr("xyz"), null, "xyz > null");
+equal(bitstrtobinstr("rxyz"), null, "rxyz > null");
+equal(bitstrtobinstr(1234), null, "1234 > null");
+});
+
+test("binstrtobitstr test", function() {
+equal(binstrtobitstr("101"), "05a0", "101 > 05a0");
+equal(binstrtobitstr("101000001"), "07a080", "101000001 > 07a080");
+equal(binstrtobitstr("xyz"), null, "xyz > null");
+equal(binstrtobitstr(1234), null, "1234 > null");
+});
+
+test("namearraytobitstr test", function() {
+var db = {
+  apple: 0,
+  banana: 3,
+  mango: 4,
+  kiwi: 8,
+  orange: 9
+};
+equal(namearraytobinstr(['apple'], db), '1', '> 1');
+equal(namearraytobinstr(['apple','banana','mango'], db), '10011', '> 10011');
+equal(namearraytobinstr(['banana','kiwi','orange'], db), '0001000011', '> 0001000011');
+});
+
+});
+</script>
+  
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture">test markup</div>
+
+<p>
+<a href="../">TOP</a> | 
+<a href="index.html">TEST INDEX</a> | 
+<a href="qunit-do-base64x.html">base64x</a> | 
+<a href="qunit-do-base64x-class.html">base64x-class</a> | 
+<a href="qunit-do-jws-intdate.html">JWS.intDate</a> | 
+</p>
+
+</body>
+</html>

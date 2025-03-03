@@ -1,0 +1,40 @@
+#!/bin/bash
+if [ "$1" == "" ]; then
+        echo "Variavel Name FS"
+        exit 1
+fi
+if [ "$2" == "" ]; then
+        echo "Variavel UUID FS"
+        exit 1
+fi
+if [ "$3" == "" ]; then
+        echo "Variavel Domain FS"
+        exit 1
+fi
+
+sudo -u www-data /bin/rm -rf /var/www/html/fluxpbx/app/flux_text_speech/recordings/$1/text/$1_text.txt
+sudo -u www-data /bin/rm -rf /var/www/html/fluxpbx/app/flux_text_speech/recordings/$1/audio/$1.wav
+
+
+sudo -u www-data /bin/mkdir -p /var/www/html/fluxpbx/app/flux_text_speech/recordings/$1/text
+sudo -u www-data /bin/mkdir -p /var/www/html/fluxpbx/app/flux_text_speech/recordings/$1/audio
+
+sudo -u www-data /usr/bin/psql -d fluxpbx -U fluxuser -t -c "select flux_text_txt from v_flux_text where flux_text_uuid = '$2'" -o /var/www/html/fluxpbx/app/flux_text_speech/recordings/$1/text/$1_text.txt
+
+file1=`cat /var/www/html/fluxpbx/app/flux_text_speech/recordings/$1/text/$1_text.txt`
+
+
+
+
+#node text_to_speech.v1.js 'teste' 'Teste de voz argumento'
+#sudo -u www-data /bin/mkdir -p /var/www/html/fluxpbx/app/flux_text_speech/recordings/$1/text
+#sudo -u www-data /bin/mkdir -p /var/www/html/fluxpbx/app/flux_text_speech/recordings/$1/audio
+
+
+sudo -u www-data /usr/local/bin/node /var/www/html/fluxpbx/app/flux_text_speech/resources/scripts/text_to_speech.v1.js --name="$1" --textivr="$file1"
+
+
+sudo -u www-data /bin/cp /var/www/html/fluxpbx/app/flux_text_speech/recordings/$1/audio/$1.wav /var/lib/freeswitch/recordings/sbcdev4.flux.net.br/$1.wav
+
+
+sudo -u www-data /usr/bin/psql -d fluxpbx -U fluxuser -t -c "insert into ""v_recordings"" (""recording_uuid"", ""domain_uuid"", ""recording_filename"", ""recording_name"", ""recording_description"", ""recording_base64"") VALUES ('$2', '$3', '$1.wav', '$1',NULL, NULL);"

@@ -1,0 +1,1193 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+          "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>QUnit for X.509 Certificate Extensions in 'x509.js'</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<script type="text/javascript" src="jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="qunit.js"></script>
+<link rel="stylesheet" href="qunit.css" type="text/css" media="screen" />
+
+<script src="../ext/cj/cryptojs-312-core-fix.js"></script>
+<script src="../ext/cj/x64-core.js"></script>
+<script src="../ext/cj/cipher-core_min.js"></script>
+<script src="../ext/cj/aes_min.js"></script>
+<script src="../ext/cj/tripledes_min.js"></script>
+<script src="../ext/cj/enc-base64_min.js"></script>
+<script src="../ext/cj/md5_min.js"></script>
+<script src="../ext/cj/sha1_min.js"></script>
+<script src="../ext/cj/sha256_min.js"></script>
+<script src="../ext/cj/sha224_min.js"></script>
+<script src="../ext/cj/sha512_min.js"></script>
+<script src="../ext/cj/sha384_min.js"></script>
+<script src="../ext/cj/ripemd160_min.js"></script>
+<script src="../ext/cj/hmac_min.js"></script>
+<script src="../ext/cj/pbkdf2_min.js"></script>
+
+<script src="../ext/jsbn.js"></script>
+<script src="../ext/jsbn2.js"></script>
+<script src="../ext/prng4.js"></script>
+<script src="../ext/rng.js"></script>
+<script src="../ext/rsa.js"></script>
+<script src="../ext/rsa2.js"></script>
+<script src="../ext/base64.js"></script>
+
+<script src="../src/base64x-1.1.js"></script>
+<script src="../src/crypto-1.1.js"></script>
+<script src="../src/asn1hex-1.1.js"></script>
+<script src="../src/rsapem-1.1.js"></script>
+<script src="../src/rsasign-1.2.js"></script>
+<script src="../src/x509-1.1.js"></script>
+<script src="../src/asn1-1.0.js"></script>
+<script src="../src/asn1x509-1.0.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+
+var certGithubPEM = "-----BEGIN CERTIFICATE-----\r\n" +
+"MIIF4DCCBMigAwIBAgIQDACTENIG2+M3VTWAEY3chzANBgkqhkiG9w0BAQsFADB1\r\n" +
+"MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3\r\n" +
+"d3cuZGlnaWNlcnQuY29tMTQwMgYDVQQDEytEaWdpQ2VydCBTSEEyIEV4dGVuZGVk\r\n" +
+"IFZhbGlkYXRpb24gU2VydmVyIENBMB4XDTE0MDQwODAwMDAwMFoXDTE2MDQxMjEy\r\n" +
+"MDAwMFowgfAxHTAbBgNVBA8MFFByaXZhdGUgT3JnYW5pemF0aW9uMRMwEQYLKwYB\r\n" +
+"BAGCNzwCAQMTAlVTMRkwFwYLKwYBBAGCNzwCAQITCERlbGF3YXJlMRAwDgYDVQQF\r\n" +
+"Ewc1MTU3NTUwMRcwFQYDVQQJEw41NDggNHRoIFN0cmVldDEOMAwGA1UEERMFOTQx\r\n" +
+"MDcxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1T\r\n" +
+"YW4gRnJhbmNpc2NvMRUwEwYDVQQKEwxHaXRIdWIsIEluYy4xEzARBgNVBAMTCmdp\r\n" +
+"dGh1Yi5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCx1Nw8r/3z\r\n" +
+"Tu3BZ63myyLot+KrKPL33GJwCNEMr9YWaiGwNksXDTZjBK6/6iBRlWVm8r+5TaQM\r\n" +
+"Kev1FbHoNbNwEJTVG1m0Jg/Wg1dZneF8Cd3gE8pNb0Obzc+HOhWnhd1mg+2TDP4r\r\n" +
+"bTgceYiQz61YGC1R0cKj8keMbzgJubjvTJMLy4OUh+rgo7XZe5trD0P5yu6ADSin\r\n" +
+"dvEl9ME1PPZ0rd5qM4J73P1LdqfC7vJqv6kkpl/nLnwO28N0c/p+xtjPYOs2ViG2\r\n" +
+"wYq4JIJNeCS66R2hiqeHvmYlab++O3JuT+DkhSUIsZGJuNZ0ZXabLE9iH6H6Or6c\r\n" +
+"JL+fyrDFwGeNAgMBAAGjggHuMIIB6jAfBgNVHSMEGDAWgBQ901Cl1qCt7vNKYApl\r\n" +
+"0yHU+PjWDzAdBgNVHQ4EFgQUakOQfTuYFHJSlTqqKApD+FF+06YwJQYDVR0RBB4w\r\n" +
+"HIIKZ2l0aHViLmNvbYIOd3d3LmdpdGh1Yi5jb20wDgYDVR0PAQH/BAQDAgWgMB0G\r\n" +
+"A1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjB1BgNVHR8EbjBsMDSgMqAwhi5o\r\n" +
+"dHRwOi8vY3JsMy5kaWdpY2VydC5jb20vc2hhMi1ldi1zZXJ2ZXItZzEuY3JsMDSg\r\n" +
+"MqAwhi5odHRwOi8vY3JsNC5kaWdpY2VydC5jb20vc2hhMi1ldi1zZXJ2ZXItZzEu\r\n" +
+"Y3JsMEIGA1UdIAQ7MDkwNwYJYIZIAYb9bAIBMCowKAYIKwYBBQUHAgEWHGh0dHBz\r\n" +
+"Oi8vd3d3LmRpZ2ljZXJ0LmNvbS9DUFMwgYgGCCsGAQUFBwEBBHwwejAkBggrBgEF\r\n" +
+"BQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29tMFIGCCsGAQUFBzAChkZodHRw\r\n" +
+"Oi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vRGlnaUNlcnRTSEEyRXh0ZW5kZWRWYWxp\r\n" +
+"ZGF0aW9uU2VydmVyQ0EuY3J0MAwGA1UdEwEB/wQCMAAwDQYJKoZIhvcNAQELBQAD\r\n" +
+"ggEBAG/nbcuC8++QhwnXDxUiLIz+06scipbbXRJd0XjAMbD/RciJ9wiYUhcfTEsg\r\n" +
+"ZGpt21DXEL5+q/4vgNipSlhBaYFyGQiDm5IQTmIte0ZwQ26jUxMf4pOmI1v3kj43\r\n" +
+"FHU7uUskQS6lPUgND5nqHkKXxv6V2qtHmssrA9YNQMEK93ga2rWDpK21mUkgLviT\r\n" +
+"PB5sPdE7IzprOCp+Ynpf3RcFddAkXb6NqJoQRPrStMrv19C1dqUmJRwIQdhkkqev\r\n" +
+"ff6IQDlhC8BIMKmCNK33cEYDfDWROtW7JNgBvBTwww8jO1gyug8SbGZ6bZ3k8OV8\r\n" +
+"XX4C2NesiZcLYbc2n7B9O+63M2k=\r\n" +
+"-----END CERTIFICATE-----\r\n";
+
+// _test/0cert_sites/digicertevroot.cer
+var digiCertEvRootPEM = (function() {/*
+-----BEGIN CERTIFICATE-----
+MIIDxTCCAq2gAwIBAgIQAqxcJmoLQJuPC3nyrkYldzANBgkqhkiG9w0BAQUFADBs
+MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3
+d3cuZGlnaWNlcnQuY29tMSswKQYDVQQDEyJEaWdpQ2VydCBIaWdoIEFzc3VyYW5j
+ZSBFViBSb290IENBMB4XDTA2MTExMDAwMDAwMFoXDTMxMTExMDAwMDAwMFowbDEL
+MAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3
+LmRpZ2ljZXJ0LmNvbTErMCkGA1UEAxMiRGlnaUNlcnQgSGlnaCBBc3N1cmFuY2Ug
+RVYgUm9vdCBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMbM5XPm
++9S75S0tMqbf5YE/yc0lSbZxKsPVlDRnogocsF9ppkCxxLeyj9CYpKlBWTrT3JTW
+PNt0OKRKzE0lgvdKpVMSOO7zSW1xkX5jtqumX8OkhPhPYlG++MXs2ziS4wblCJEM
+xChBVfvLWokVfnHoNb9Ncgk9vjo4UFt3MRuNs8ckRZqnrG0AFFoEt7oT61EKmEFB
+Ik5lYYeBQVCmeVyJ3hlKV9Uu5l0cUyx+mM0aBhakaHPQNAQTXKFx01p8VdteZOE3
+hzBWBOURtCmAEvF5OYiiAhF8J2a3iLd48soKqDirCmTCv2ZdlYTBoSUeh10aUAsg
+EsxBu24LUTi4S8sCAwEAAaNjMGEwDgYDVR0PAQH/BAQDAgGGMA8GA1UdEwEB/wQF
+MAMBAf8wHQYDVR0OBBYEFLE+w2kD+L9HAdSYJhoIAu9jZCvDMB8GA1UdIwQYMBaA
+FLE+w2kD+L9HAdSYJhoIAu9jZCvDMA0GCSqGSIb3DQEBBQUAA4IBAQAcGgaX3Nec
+nzyIZgYIVyHbIUf4KmeqvxgydkAQV8GK83rZEWWONfqe/EW1ntlMMUu4kehDLI6z
+eM7b41N5cdblIZQB2lWHmiRk9opmzN6cN82oNLFpmyPInngiK3BD41VHMWEZ71jF
+hS9OMPagMRYjyOfiZRYzy78aG6A9+MpeizGLYAiJLQwGXFK3xPkKmNEVX58Svnw2
+Yzi9RKR/5CYrCsSXaQ3pjOLAEFe4yHYSkVXySGnYvCoCWw9E1CAx2/S6cCZdkGCe
+vEsXCS+0yx5DaMkHJ8HSXPfqIbloEpw8nL+e/IBcm2PN7EeqJSdnoDfzAIJ9VNep
++OkuE6N36B9K
+-----END CERTIFICATE-----
+*/}).toString().match(/\/\*([^]*)\*\//)[1];
+
+// _test/0cert_sites/digicertevroot.cer
+var pulseCioGovPEM = (function() {/*
+-----BEGIN CERTIFICATE-----
+MIIFJDCCBAygAwIBAgISA+A6XXjiqOEp6wsxRPSMihs9MA0GCSqGSIb3DQEBCwUA
+MEoxCzAJBgNVBAYTAlVTMRYwFAYDVQQKEw1MZXQncyBFbmNyeXB0MSMwIQYDVQQD
+ExpMZXQncyBFbmNyeXB0IEF1dGhvcml0eSBYMzAeFw0xNjA0MDMwMjM3MDBaFw0x
+NjA3MDIwMjM3MDBaMBgxFjAUBgNVBAMTDXB1bHNlLmNpby5nb3YwggEiMA0GCSqG
+SIb3DQEBAQUAA4IBDwAwggEKAoIBAQDKvi1wLwoYDIa2pC+/3m/BdEm3iu6r7XpH
+4+NtEjYvdZury/E3dmdCtU/sBIb/ZbE8MCFu9DCOWNOzkB8tke6z65a2xYqDdDNm
+dWVyFimZfy3M2lsFb1ybw41XQ5xevmRTfpwnk2mRKEyzhuLxyy0J6G3dK7NAHyDA
+UehokeYEBKJNtarhNDZvxR4lwJq2rUFWlVrEuAlqvI0s2SqCN1YEbJUGmuYnjkSp
+LHbdmkXNb943bfKFUd8EbXQ3sAnZ1RMr99bJQxHJeJsBF7ZRSMcm5GFC0HtAPzyC
+MKVTQLq0X5/pgUFfZXcq9NWlHCHDpdM/ReiYZgfyUVUHtQxzBH6NAgMBAAGjggI0
+MIICMDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUF
+BwMCMAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFPLrqSD0DOiBSUtQQOjbBShgdKgG
+MB8GA1UdIwQYMBaAFKhKamMEfd265tE5t6ZFZe/zqOyhMHAGCCsGAQUFBwEBBGQw
+YjAvBggrBgEFBQcwAYYjaHR0cDovL29jc3AuaW50LXgzLmxldHNlbmNyeXB0Lm9y
+Zy8wLwYIKwYBBQUHMAKGI2h0dHA6Ly9jZXJ0LmludC14My5sZXRzZW5jcnlwdC5v
+cmcvMD4GA1UdEQQ3MDWCDWh0dHBzLmNpby5nb3aCDXB1bHNlLmNpby5nb3aCFXN0
+YWdpbmcucHVsc2UuY2lvLmdvdjCB/gYDVR0gBIH2MIHzMAgGBmeBDAECATCB5gYL
+KwYBBAGC3xMBAQEwgdYwJgYIKwYBBQUHAgEWGmh0dHA6Ly9jcHMubGV0c2VuY3J5
+cHQub3JnMIGrBggrBgEFBQcCAjCBngyBm1RoaXMgQ2VydGlmaWNhdGUgbWF5IG9u
+bHkgYmUgcmVsaWVkIHVwb24gYnkgUmVseWluZyBQYXJ0aWVzIGFuZCBvbmx5IGlu
+IGFjY29yZGFuY2Ugd2l0aCB0aGUgQ2VydGlmaWNhdGUgUG9saWN5IGZvdW5kIGF0
+IGh0dHBzOi8vbGV0c2VuY3J5cHQub3JnL3JlcG9zaXRvcnkvMA0GCSqGSIb3DQEB
+CwUAA4IBAQALdvLGTpz2/YXmGKfbKOF01bp1YWCLDa8Wha9VPnSFfNhMr4BDE1WU
+25C4qWoK/aulDPKmic9wE5GB9wWtFgkNnYRKL1IRYIiTj4RNcObAKQ8UKn6nWY5J
+QS6c083NC8kLp9bY+EUWJGImbXoSYo9kxdsmF7hMUXJwy2eGVDy8JRPl+s8hWGoO
+WacFqZW/keeSiHxuja2t/r8SADVs41HnGIGrhLpAqgetunCOVOBf3/ukXi7I/99G
+skSN1/Bs6kbCE//oDJHBGhHLrU8NCFHD3geyZ2M7fvl8NySvNmK401kdW8d0YlZ+
+huwF7BwiYT9T3KZrcukwsj5BUinH75i4
+-----END CERTIFICATE-----
+*/}).toString().match(/\/\*([^]*)\*\//)[1];
+
+// _test/0cert_sites/ip1.1.1.1.cer
+var cfip1111PEM = (function() {/*
+-----BEGIN CERTIFICATE-----
+MIID9DCCA3qgAwIBAgIQBWzetBRl/ycHFsBukRYuGTAKBggqhkjOPQQDAjBMMQsw
+CQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMSYwJAYDVQQDEx1EaWdp
+Q2VydCBFQ0MgU2VjdXJlIFNlcnZlciBDQTAeFw0xODAzMzAwMDAwMDBaFw0yMDAz
+MjUxMjAwMDBaMGwxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMN
+U2FuIEZyYW5jaXNjbzEZMBcGA1UEChMQQ2xvdWRmbGFyZSwgSW5jLjEdMBsGA1UE
+AwwUKi5jbG91ZGZsYXJlLWRucy5jb20wWTATBgcqhkjOPQIBBggqhkjOPQMBBwNC
+AASyRQsxrFBjziHmfDQjGsXBU0WWl3oxh7vg6h2V9f8lBMp18PY/td9R6VvJPa20
+AwVzIJI+dL6OSxviaIZEbmK7o4ICHDCCAhgwHwYDVR0jBBgwFoAUo53mH/naOU/A
+buiRy5Wl2jHiCp8wHQYDVR0OBBYEFN+XTeVDs7BBp0LykM+Jf64SV4ThMGMGA1Ud
+EQRcMFqCFCouY2xvdWRmbGFyZS1kbnMuY29thwQBAQEBhwQBAAABghJjbG91ZGZs
+YXJlLWRucy5jb22HECYGRwBHAAAAAAAAAAAAERGHECYGRwBHAAAAAAAAAAAAEAEw
+DgYDVR0PAQH/BAQDAgeAMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjBp
+BgNVHR8EYjBgMC6gLKAqhihodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vc3NjYS1l
+Y2MtZzEuY3JsMC6gLKAqhihodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vc3NjYS1l
+Y2MtZzEuY3JsMEwGA1UdIARFMEMwNwYJYIZIAYb9bAEBMCowKAYIKwYBBQUHAgEW
+HGh0dHBzOi8vd3d3LmRpZ2ljZXJ0LmNvbS9DUFMwCAYGZ4EMAQICMHsGCCsGAQUF
+BwEBBG8wbTAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29tMEUG
+CCsGAQUFBzAChjlodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vRGlnaUNlcnRF
+Q0NTZWN1cmVTZXJ2ZXJDQS5jcnQwDAYDVR0TAQH/BAIwADAKBggqhkjOPQQDAgNo
+ADBlAjEAjoyy2Ogh1i1/Kh9+psMc1OChlQIvQF6AkojZS8yliar6m8q5nqC3qe0h
+HR0fExwLAjAueWRnHX4QJ9loqMhsPk3NB0Cs0mStsNDNG6/DpCYw7XmjoG3y1LS7
+ZkZZmqNn2Q8=
+-----END CERTIFICATE-----
+*/}).toString().match(/\/\*([^]*)\*\//)[1];
+
+// _test/0cert_sites/danmarksapotuser1.cer
+var danmarksUser1PEM = (function() {/*
+-----BEGIN CERTIFICATE-----
+MIIGYDCCBUigAwIBAgIEU7s4dDANBgkqhkiG9w0BAQsFADBAMQswCQYDVQQGEwJE
+SzESMBAGA1UECgwJVFJVU1QyNDA4MR0wGwYDVQQDDBRUUlVTVDI0MDggT0NFUyBD
+QSBJSTAeFw0xNTEyMzAxMjE4MDNaFw0xODEyMzAxMjE2NTBaMIGeMQswCQYDVQQG
+EwJESzEyMDAGA1UECgwpRGFubWFya3MgQXBvdGVrZXJmb3JlbmluZyAvLyBDVlI6
+MjAxMjQ1MTIxWzAgBgNVBAUTGUNWUjoyMDEyNDUxMi1VSUQ6NjQyOTA2OTgwNwYD
+VQQDDDBEYW5tYXJrcyBBcG90ZWtlcmZvcmVuaW5nIC0gRGFubWFya3MgQXBvdGVr
+ZXJmb3IwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDQNL1iA9kO241w
+eNpuTm/OoU5i9kOpp+/Vi6OmY14aYEIpgDEWr6nfeGugrsFyR2crOxr7iRhngUyk
+UnSsfSqPkhhGiXdcPtEplSubCzP08zf/0PyIyyV5LoBEZr60M7LmahPuQojb09sK
+dCTEDMk46LCeISEQGI/ZggALH1SRSQiodctQvVN98okuaJDobgbTi/P2sMu3OK/J
+SbQrI2kn5d4ShUlWIBkZqsRUBNRmrvfBQzZpv2+mkDMFGouYzSkYccPivzQCx8BV
+9e2QdrB6KVnT6m/l5ND0d3qY41h0i/CffnjofQmoaQ1a3xO82+A6EF+Dl3QF5Wcm
+fR2Z2C6rAgMBAAGjggMBMIIC/TAOBgNVHQ8BAf8EBAMCA7gwgYkGCCsGAQUFBwEB
+BH0wezA1BggrBgEFBQcwAYYpaHR0cDovL29jc3AuaWNhMDIudHJ1c3QyNDA4LmNv
+bS9yZXNwb25kZXIwQgYIKwYBBQUHMAKGNmh0dHA6Ly92LmFpYS5pY2EwMi50cnVz
+dDI0MDguY29tL29jZXMtaXNzdWluZzAyLWNhLmNlcjCCAUMGA1UdIASCATowggE2
+MIIBMgYKKoFQgSkBAQEDBDCCASIwLwYIKwYBBQUHAgEWI2h0dHA6Ly93d3cudHJ1
+c3QyNDA4LmNvbS9yZXBvc2l0b3J5MIHuBggrBgEFBQcCAjCB4TAQFglUUlVTVDI0
+MDgwAwIBARqBzEZvciBhbnZlbmRlbHNlIGFmIGNlcnRpZmlrYXRldCBn5mxkZXIg
+T0NFUyB2aWxr5XIsIENQUyBvZyBPQ0VTIENQLCBkZXIga2FuIGhlbnRlcyBmcmEg
+d3d3LnRydXN0MjQwOC5jb20vcmVwb3NpdG9yeS4gQmVt5nJrLCBhdCBUUlVTVDI0
+MDggZWZ0ZXIgdmlsa+VyZW5lIGhhciBldCBiZWdy5m5zZXQgYW5zdmFyIGlmdC4g
+cHJvZmVzc2lvbmVsbGUgcGFydGVyLjAzBgNVHREELDAqgShhcG90ZWtlcmZvcmVu
+aW5nZW5AYXBvdGVrZXJmb3JlbmluZ2VuLmRrMIGXBgNVHR8EgY8wgYwwLqAsoCqG
+KGh0dHA6Ly9jcmwuaWNhMDIudHJ1c3QyNDA4LmNvbS9pY2EwMi5jcmwwWqBYoFak
+VDBSMQswCQYDVQQGEwJESzESMBAGA1UECgwJVFJVU1QyNDA4MR0wGwYDVQQDDBRU
+UlVTVDI0MDggT0NFUyBDQSBJSTEQMA4GA1UEAwwHQ1JMMzExNzAfBgNVHSMEGDAW
+gBSZj7oNia4hGkJ6Cq4aTE4i/xDrjDAdBgNVHQ4EFgQUc/W+LbQMXATob80qxnVN
+E5DeDagwCQYDVR0TBAIwADANBgkqhkiG9w0BAQsFAAOCAQEAWgMjuLxT1GtEfWxR
+6Giqj2wUZxn0EecPWrWotL5Rvl5kNDXajcnsdAzEBS+0ZCXP1i/to+tupkQOs/o0
+cO759nBIY0O8ZbOvzsKBeLxWdQp2EuLZKDBwLpN49i8yzSJYWd7/KfH15DcNICvD
+wHPL6SBjwokCuz5dTFVdjXybOrIihRg8zRKZ4Utm1NV2Rfoh4C9D50uIMgcaIJ2W
+rhD4uIUbomqy9Ex0qUmTAV6eZh5ynCjlVYie3UqeJ+UoVfpsNMFNRJdoeKsn6g1W
+U2rgoKzYAzliiC89n3hrNbm7rcBLgDFfWsHUtO1w2PDfRAqJcHWoTQiIQNUCPTa8
+B9LZ8g==
+*/}).toString().match(/\/\*([^]*)\*\//)[1];
+
+// with SAN(client, client.somedomain, 192.168.56.101, 10.20.44.10)
+var certSANIPDNS = (function() {/*
+-----BEGIN CERTIFICATE-----
+MIIFKTCCAxGgAwIBAgIJAJSzyYlwlyKcMA0GCSqGSIb3DQEBCwUAMIGvMQswCQYD
+VQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEUMBIGA1UEBwwLU2FudGEgQ2xh
+cmExGjAYBgNVBAoMEU9yZ2FuaXphdGlvbiBOYW1lMRIwEAYDVQQLDAlVbml0IE5h
+bWUxHTAbBgNVBAMMFGNlcnRpZmljYXRlLWF1dG9yaXR5MSYwJAYJKoZIhvcNAQkB
+Fhd1c2VybmFtZUBzb21lZG9tYWluLmNvbTAeFw0xNzEyMjAwMTM4MDFaFw0yMDA5
+MTQwMTM4MDFaMIGlMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEU
+MBIGA1UEBwwLU2FudGEgQ2xhcmExGjAYBgNVBAoMEU9yZ2FuaXphdGlvbiBOYW1l
+MRIwEAYDVQQLDAlVbml0IE5hbWUxEzARBgNVBAMMCmNsaWVudE5hbWUxJjAkBgkq
+hkiG9w0BCQEWF3VzZXJuYW1lQHNvbWVkb21haW4uY29tMIIBIjANBgkqhkiG9w0B
+AQEFAAOCAQ8AMIIBCgKCAQEAw8WmiYnCLEI+TIvdPD/P6hf6a5PyG3Q4eT5gthdH
+f5ZVPeCaXjUuL6/2jytQENBqx0f22A7+DQJPzc9bA8SDt16/4Y+bWNjkWHyMAZT+
+BaBf84pExh7F0zFlW0QvFcHWSSK4LFc/GYcn8p83Co2wgDmvfJ1ltRDJVEVyrjrU
+CSRcOWY27MhJAy/vsZGZGGBcX97Oeneqdr5BUWl2MTd/9rb5Ftn4yulB1joLvOR+
+Gi6+ja0Er1UWmQT63vdOZ+Or3sFE4pSA36G1vSqJ7JoVLVFvQmoowaqmkoQ8tG3/
+Ohq+eN8TI+nXeDn+atluF8T78Z+1SPIqZstrJUmk9xfq1QIDAQABo1AwTjAJBgNV
+HRMEAjAAMAsGA1UdDwQEAwIF4DA0BgNVHREELTArggZjbGVpbnSCFWNsZWludC5z
+b21lZG9tYWluLmNvbYcEwKg4ZYcEChQsCjANBgkqhkiG9w0BAQsFAAOCAgEAiOih
+qQi6MDpw8HaLOZxEj97yJTGQYCHLPdqz0ijbq1FRBoBigqZUlBPUJQflwhhIApZt
+xB6Ha0QtcF5L3cMsYEO0ZCTkHYWocAdkIz7uS0EF0WWbZhjNugbN6HATXSZKFjIR
+7ePfFg8EEmxJeSRxMbhI1acAwXN3II89DTAvh8d4+S0faIr0c+7b0YJ2gPzcWzv/
+HWxY+d3K7VEBCCzA0NFzCiY3ezVYeNoA+50rJxbh5V8nRdZQw8JF27fefwt7S4lo
+teakGFIrTzx//2n25mHdbwT7sMSEkG3ChXkCG5ri3VnRdRCRcKck+CXral1Otfxj
+5KqN4SRk7NayoLvNKvfXHh3C3ANih17Si5EtXIX+k9DhYfrmWqKiqH1OhaPnpgtA
+vrBnd/mDMcrrSDWPlocfmW1YJk/J+euRCnfIfnA3GtGyYuZ/soK85Z/qKuLQ/lVU
+dLxyX7nku8UxljJkQbFP29Bw0SuJtfd3t+xAdeBXUWN/YBkh79LFTfq6D4IXwcZk
+EuSaFaQXYZO5KJEoXFsQYz9DE1OZgX2Q9Rwg0LPmWjkwQaQSsndfLPLxoKy9+Iz3
+VXS1CyM7ud+5li8hcx6ciS5N456T9SVEWtwSB+WaWM8lak0nuS5roFY0vrxaoy0g
+Ty4xiTJKapQKFNSsEI1z7DV4eH0YQv9BQlbmQuI=
+-----END CERTIFICATE-----
+*/}).toString().match(/\/\*([^]*)\*\//)[1];
+
+// _test/0cert_sites/globalsignr6root.cer keyUsage=keyCertSign,cRLSign
+var certGlobalSignRootR6PEM = (function() {/*
+-----BEGIN CERTIFICATE-----
+MIIDXzCCAkegAwIBAgILBAAAAAABIVhTCKIwDQYJKoZIhvcNAQELBQAwTDEgMB4G
+A1UECxMXR2xvYmFsU2lnbiBSb290IENBIC0gUjMxEzARBgNVBAoTCkdsb2JhbFNp
+Z24xEzARBgNVBAMTCkdsb2JhbFNpZ24wHhcNMDkwMzE4MTAwMDAwWhcNMjkwMzE4
+MTAwMDAwWjBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEG
+A1UEChMKR2xvYmFsU2lnbjETMBEGA1UEAxMKR2xvYmFsU2lnbjCCASIwDQYJKoZI
+hvcNAQEBBQADggEPADCCAQoCggEBAMwldpB5BngiFvXAg7aEyiie/QV2EcWtiHL8
+RgJDx7KKnQRfJMsuS+FggkbhUqsMgUdwbN1k0ev1LKMPgj0MK66X17YUhhB5uzsT
+gHeMCOFJ0mpiLx9e+pZo34knlTifBtc+ycsmWQ1z3rDI6SYOgxXG71uL0gRgykmm
+KPZpO/bLyCiR5Z2KYVc3rHQU3HTgOu5yLy6c+9C7v/U9AOEGM+iCK65TpjoWc4zd
+QQ4gOsC0p6Hpsk+QLjJg6VfLuQSSaGjlOCZgdbKfd/+RFO+uIEn8rUAVSNECMWEZ
+XriX7613t2Saer9fwRPvm2L7DWzgVGkWqQPabumDk3F2xmmFghcCAwEAAaNCMEAw
+DgYDVR0PAQH/BAQDAgEGMA8GA1UdEwEB/wQFMAMBAf8wHQYDVR0OBBYEFI/wS3+o
+LkUkrk1Q+mOai97i3Ru8MA0GCSqGSIb3DQEBCwUAA4IBAQBLQNvAUKr+yAzv95ZU
+RUm7lgAJQayzE4aGKAczymvmdLm6AC2upArT9fHxD4q/c2dKg8dEe3jgr25sbwMp
+jjM5RcOO5LlXbKr8EpbsU8Yt5CRsuZRj+9xTaGdWPoO4zzUhw8lo/s7awlOqzJCK
+6fBdRoyV3XpYKBovHd7NADdBj+1EbddTKJd+82cEHhXXipa0095MJ6RMG3NzdvQX
+mcIfeg7jLQitChws/zyrVQ4PkX4268NXSb7hLi18YIvDQVETI53O9zJrlAGomecs
+Mx86OyXShkDOOyyGeMlhLxS67ttVb9+E7gUJTb0o2HLO02JQZR7rkpeDMdmztcpH
+WD9f
+-----END CERTIFICATE-----
+*/}).toString().match(/\/\*([^]*)\*\//)[1];
+
+// _gitpg/jsrsasign/test/eckey/k1.self.cer
+var k1CertPEM = "" +
+"-----BEGIN CERTIFICATE-----\n" +
+"MIIBfDCCASGgAwIBAgIJAKbxELQvSUDNMAoGCCqGSM49BAMCMBoxCzAJBgNVBAYT\n" +
+"AlVTMQswCQYDVQQKDAJLMTAeFw0xMzA3MTQwMjE3MTdaFw0yMzA3MTIwMjE3MTda\n" +
+"MBoxCzAJBgNVBAYTAlVTMQswCQYDVQQKDAJLMTBZMBMGByqGSM49AgEGCCqGSM49\n" +
+"AwEHA0IABKAVMqPAkABT3mD77+/MpYeTMBWY0wi0Hm9ONk44jCcRvvQyxZkUjJQU\n" +
+"PU/0bCy3Pj5qQdfu8jwEfqEeYGZ95CWjUDBOMB0GA1UdDgQWBBTIR74yfMz/Y4hw\n" +
+"dXSW4r42bESo/DAfBgNVHSMEGDAWgBTIR74yfMz/Y4hwdXSW4r42bESo/DAMBgNV\n" +
+"HRMEBTADAQH/MAoGCCqGSM49BAMCA0kAMEYCIQDfAcS/WKBrP6JBgksQVpp4jdq4\n" +
+"C53Yu4F5NkaMgthAHgIhANGRdWAP1QdW9l6tiglQwdqJs4T0e8+NYv+RcAb3VYwn\n" +
+"-----END CERTIFICATE-----\n";
+var k1CertHex = pemtohex(k1CertPEM);
+
+// test/z1.der1-p3 basicConstraints={ca:true, pathlen:3}
+var z1P3CertHex = "3082017630820120a003020102020107300d06092a864886f70d01010b05003019310b3009060355040613025553310a3008060355040a0c0154301e170d3136303431333134313832365a170d3236303431333134313832365a3019310b3009060355040613025553310a3008060355040a0c0154305c300d06092a864886f70d0101010500034b003048024100e8664dd2b40529121568f3b39bc97a62e7ba3c09babdc4f0dcd8df90eb790b9bb645a2b70e3112747b4d3c41b51424895115fef88f79d43eae5b1a4e3518fd590203010001a3533051301d0603551d0e04160414c5473ee200c8e7ad7003dff5420b8cddf4c20e15301f0603551d23041830168014c5473ee200c8e7ad7003dff5420b8cddf4c20e15300f0603551d13040830060101ff020103300d06092a864886f70d01010b0500034100862bf6d5f0c366dd1c71af10df93e2e9e0b7210b6912d1774e27107203f2dc257f9b132285bc1ce8d32d8ffc69470cd6c52ec76b7d68708eca3bbd49556f3005";
+
+// _data/0csrext/certbot1.csr.pem
+var csrcertbot1 = (function() {/*
+-----BEGIN CERTIFICATE REQUEST-----
+MIICeDCCAWACAQIwADCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMf6
+wBbRavWLUCZfLNF+C4uNO/T6N2YCxWgM/XI04hPLqQodfTudcIwsbWGGkRpJSwGG
+pDXQs3A1fH5xrfev7PlWaDYCkhC4jrrZ/1L8HGR/nUxrS3jFTbzZTGA84TbkW8FH
+fyugWWqnjrnoxOJW0XdiWe1Drsr5vaqVS0N4qEISH/ciLnaVeV//tLJc/V5g3sFu
+4AQZQykvkltGD7w8vBhM4a/KQGeV3hG+ctCAwV5+RhQxForDgUv3ZPt76yVt142x
+TJGsq8fsdEqBjg7xVQn+458Z3yMMQVMLCf/aEHFLYurc6PD2kEzJf+mRYXY3sNwy
+4l38Qf8velG6Ij+8eVkCAwEAAaAzMDEGCSqGSIb3DQEJDjEkMCIwIAYDVR0RBBkw
+F4IVbm9kZWpzLnJ6LWJzZC5teS5jb3JwMA0GCSqGSIb3DQEBCwUAA4IBAQB0isgR
+I57C2GCszZdLdouAjpIZXa8W1C3FjOHcd6RQ77Fd+h22fn63gEMBUQk3AFzq4t2b
+8JeOH1xjZ4gjTEXH4whOh95gR+LDvVmK3khIHBLMVCyJgUEUNTZJoaMu7adhpbJX
+taiHpny63sQvh3QtEh7arMx8EaDh8MKYBQ5iTylvN0SS/yQcUvaS4kFs5CJTE/YG
+FepaWdBWPlE4C5oJ956lnuZSRHlugKHUzWD/V/tSYLDJmQVJ7sPNJM1JaTd79cDq
+cbtqMCqhg0GKH4OmbrS+Zu99iox+I7Mbsu9+F4rZjinez1looQ5hfJ+6FAtxE1HI
+2/x4YDGRZtDqwcFe
+-----END CERTIFICATE REQUEST-----
+*/}).toString().match(/\/\*([^]*)\*\//)[1];
+
+test("parseExt github.com", function() {
+  var x = new X509();
+  x.readCertPEM(certGithubPEM); // parseExt  called internally
+
+  equal(x.aExtInfo.length, 9, "9 aExtInfo.length");
+
+  equal(x.aExtInfo[0].oid, "2.5.29.35", "[0].oid = AKID");
+  equal(x.aExtInfo[0].critical, false, "[0].critical = false");
+  equal(x.aExtInfo[0].vidx, 1502, "[0].vidx");
+  equal(ASN1HEX.getTLV(x.hex, x.aExtInfo[0].vidx), "301680143dd350a5d6a0adeef34a600a65d321d4f8f8d60f", "[0].tlv");
+
+  equal(x.aExtInfo[3].oid, "2.5.29.15", "[3].oid = keyUsage");
+  equal(x.aExtInfo[3].critical, true, "[3].critical = true");
+  equal(x.aExtInfo[3].vidx, 1714, "[3].vidx");
+  equal(ASN1HEX.getTLV(x.hex, x.aExtInfo[3].vidx), "030205a0", "[3].tlv = 0302...");
+
+  equal(x.aExtInfo[8].oid, "2.5.29.19", "[8].oid = basicConstraints");
+  equal(x.aExtInfo[8].critical, true, "[8].critical = true");
+  equal(x.aExtInfo[8].vidx, 2460, "[8].vidx");
+  equal(ASN1HEX.getTLV(x.hex, x.aExtInfo[8].vidx), "3000", "[8].tlv = 3000");
+});
+
+test("getExtInfo github.com", function() {
+  var x = new X509();
+  x.readCertPEM(certGithubPEM); // parseExt  called internally
+
+  var i3o = x.getExtInfo("2.5.29.19");
+  equal(i3o !== undefined, true, "i3(2.5.29.19) by oid not undefined");
+  equal(i3o.oid, "2.5.29.19", "oid");
+  equal(i3o.critical, true, "critical");
+  equal(i3o.vidx, 2460, "vidx");
+
+  var i3n = x.getExtInfo("keyUsage");
+  equal(i3n !== undefined, true, "i3n(keyUsage) by name not undefined");
+  equal(i3n.oid, "2.5.29.15", "oid");
+  equal(i3n.critical, true, "critical");
+  equal(i3n.vidx, 1714, "vidx");
+
+  var ixn = x.getExtInfo("unknownExt1");
+  equal(ixn !== undefined, false, "ixn(unknownExt1) by name is undefined");
+
+  var iyn = x.getExtInfo("0.1.2.3");
+  equal(iyn !== undefined, false, "iyn(0.1.2.3) by oid is undefined");
+});
+
+test("getExtBasicConstraints", function() {
+var x = new X509();
+x.readCertPEM(certGithubPEM);
+deepEqual(
+x.getExtBasicConstraints(),
+{extname:"basicConstraints",critical:true},
+"for GitHub.com site");
+
+var x2 = new X509();
+x2.readCertPEM(digiCertEvRootPEM);
+deepEqual(
+x2.getExtBasicConstraints(),
+{extname:"basicConstraints",critical:true,cA:true},
+"cA=true for DigiCert EV root");
+
+var x3 = new X509();
+x3.readCertHex(z1P3CertHex);
+deepEqual(
+x3.getExtBasicConstraints(),
+{extname:"basicConstraints",cA:true,pathLen:3},
+"cA:true,pathLen:3 for z1p3");
+});
+
+test("getExtKeyUsageBin()", function() {
+var x1 = new X509(certGithubPEM);
+equal(x1.getExtKeyUsageBin(), "101", "101 for GitHub.com site");
+
+var x2 = new X509(digiCertEvRootPEM);
+equal(x2.getExtKeyUsageBin(), "1000011", "1000011 for DigiCert EV root");
+
+var x3 = new X509(certGlobalSignRootR6PEM);
+equal(x3.getExtKeyUsageBin(), "0000011", "0000011 for GlobalSign R6 root");
+
+var x = new X509();
+equal(x.getExtKeyUsageBin("0303070080"), "000000001", "decipherOnly");
+equal(x.getExtKeyUsageBin("030201c2"), "1100001", "dsig,cert,crl");
+});
+
+test("getExtKeyUsageString()", function() {
+var x1 = new X509();
+x1.readCertPEM(certGithubPEM);
+equal(x1.getExtKeyUsageString(), "digitalSignature,keyEncipherment", "digitalSignature,keyEncipherment for GitHub.com site");
+
+var x2 = new X509();
+x2.readCertPEM(digiCertEvRootPEM);
+equal(x2.getExtKeyUsageString(), "digitalSignature,keyCertSign,cRLSign", "digitalSignature,keyCertSign,cRLSign for DigiCert EV root");
+
+var x3 = new X509();
+x3.readCertPEM(certGlobalSignRootR6PEM);
+equal(x3.getExtKeyUsageString(), "keyCertSign,cRLSign", "keyCertSign,cRLSign for GlobalSign R6 root");
+
+var x = new X509();
+equal(x.getExtKeyUsageString("0303070080"), "decipherOnly", "decipherOnly");
+});
+
+test("getExtKeyUsage test", function() {
+var x1 = new X509();
+x1.readCertPEM(certGithubPEM);
+deepEqual(
+x1.getExtKeyUsage(), 
+{extname:"keyUsage",
+ names: ["digitalSignature", "keyEncipherment"], critical: true },
+"digitalSignature,keyEncipherment for GitHub.com site");
+
+var x2 = new X509();
+x2.readCertPEM(digiCertEvRootPEM);
+deepEqual(
+x2.getExtKeyUsage(),
+{extname:"keyUsage",
+ names: ["digitalSignature", "keyCertSign", "cRLSign"], critical: true },
+"digitalSignature,keyCertSign,cRLSign for DigiCert EV root");
+
+var x3 = new X509();
+x3.readCertPEM(certGlobalSignRootR6PEM);
+deepEqual(
+x3.getExtKeyUsage(),
+{extname:"keyUsage",
+ names: ["keyCertSign", "cRLSign"], critical: true },
+"keyCertSign,cRLSign for GlobalSign R6 root");
+
+var x = new X509();
+deepEqual(
+x.getExtKeyUsage("0303070080", true), 
+{extname:"keyUsage",
+ names: ["decipherOnly"], critical: true },
+"decipherOnly critical=true")
+});
+
+test("getExtSubjectKeyIdentifier()", function() {
+var x = new X509();
+x.readCertPEM(certGithubPEM);
+deepEqual(
+x.getExtSubjectKeyIdentifier(), 
+{extname:"subjectKeyIdentifier",
+ kid: {hex: "6a43907d3b98147252953aaa280a43f8517ed3a6"}},
+"for GitHub.com site");
+
+var x2 = new X509();
+x2.readCertPEM(digiCertEvRootPEM);
+deepEqual(
+x2.getExtSubjectKeyIdentifier(), 
+{extname:"subjectKeyIdentifier",
+ kid: {hex: "b13ec36903f8bf4701d498261a0802ef63642bc3"}},
+"for DigiCert EV root");
+});
+
+test("getExtAuthorityKeyIdentifier()", function() {
+var x = new X509();
+x.readCertPEM(certGithubPEM);
+deepEqual(
+x.getExtAuthorityKeyIdentifier(),
+{extname:"authorityKeyIdentifier",
+ kid: {hex: "3dd350a5d6a0adeef34a600a65d321d4f8f8d60f"}},
+"for GitHub.com site");
+
+var x2 = new X509();
+x2.readCertPEM(digiCertEvRootPEM);
+deepEqual(
+x2.getExtAuthorityKeyIdentifier(),
+{extname:"authorityKeyIdentifier",
+ kid: {hex: "b13ec36903f8bf4701d498261a0802ef63642bc3"}},
+"for DigiCert EV root");
+
+var x = new X509();
+var hIn3 = "3039801427e00502504b088259f76ece524799e2246e30eba11ea41c301a310b3009060355040613024a50310b3009060355040a0c025431820101";
+var pExp3 = {
+ extname:"authorityKeyIdentifier",
+ kid: {hex: "27e00502504b088259f76ece524799e2246e30eb"},
+ issuer: {
+  array: [
+   [{type:"C",value:"JP",ds:"prn"}],
+   [{type:"O",value:"T1",ds:"utf8"}]
+  ],
+  str: "/C=JP/O=T1"
+ },
+ sn: {hex: "01"},
+ critical:true
+};
+
+
+deepEqual(
+x.getExtAuthorityKeyIdentifier(hIn3, true),
+pExp3,
+"hoge");
+});
+
+test("getExtExtKeyUsage test", function() {
+var x1 = new X509();
+x1.readCertPEM(certGithubPEM);
+deepEqual(
+x1.getExtExtKeyUsage(),
+{extname:"extKeyUsage",
+ array: ["serverAuth", "clientAuth"]},
+"for GitHub.com site");
+
+var x = new X509();
+deepEqual(
+x.getExtExtKeyUsage("302006082b0601050507030206082b06010505070304060a2b0601040182370a0304", true),
+{extname:"extKeyUsage",
+ array: ["clientAuth", "emailProtection", "1.3.6.1.4.1.311.10.3.4"], critical: true},
+"three EKU");
+});
+
+test("getExtExtKeyUsageName test (DEPRECATED)", function() {
+var x = new X509();
+x.readCertPEM(certGithubPEM);
+deepEqual(x.getExtExtKeyUsageName(), ["serverAuth", "clientAuth"], "for GitHub.com site");
+});
+
+test("getExtSubjectAltName github.com", function() {
+var x = new X509();
+x.readCertPEM(certGithubPEM);
+deepEqual(
+x.getExtSubjectAltName(),
+{extname:"subjectAltName",
+ array: [{dns: "github.com"},{dns: "www.github.com"}]
+},
+"for GitHub.com site");
+
+deepEqual(
+x.getExtSubjectAltName("302481226a6f686e2e7468652e726970706572406161613131312e6578616d706c652e636f6d"),
+{extname:"subjectAltName",
+ array: [{rfc822: "john.the.ripper@aaa111.example.com"}] },
+"mail");
+
+var x2 = new X509();
+x2.readCertPEM(cfip1111PEM);
+deepEqual(
+x2.getExtSubjectAltName(),
+{ extname:"subjectAltName",
+  array: [
+    {dns: "*.cloudflare-dns.com"},
+    {ip: "1.1.1.1"},
+    {ip: "1.0.0.1"},
+    {dns: "cloudflare-dns.com"},
+    {ip: "2606:4700:4700::1111"},
+    {ip: "2606:4700:4700::1001"}
+  ]
+},
+"cloudflare 1.1.1.1 cert"
+);
+
+});
+
+test("getExtSubjectAltName2 ip1.1.1.1 (DEPRECATED)", function() {
+  var x = new X509();
+  x.readCertPEM(cfip1111PEM);
+  deepEqual(x.getExtSubjectAltName2(), [
+    ["DNS", "*.cloudflare-dns.com"],
+    ["IP", "1.1.1.1"], ["IP", "1.0.0.1"], 
+    ["DNS", "cloudflare-dns.com"],
+    ["IP", "2606:4700:4700::1111"], ["IP", "2606:4700:4700::1001"]
+  ], "ip1.1.1.1 site");
+});
+
+test("getExtSubjectAltName with DNSx2 IPx2", function () {
+  var x = new X509();
+  x.readCertPEM(certSANIPDNS);
+  var expected = [
+    ["DNS", "cleint"], ["DNS", "cleint.somedomain.com"],
+    ["IP", "192.168.56.101"], ["IP", "10.20.44.10"]
+  ]
+  deepEqual(x.getExtSubjectAltName2(), expected, "SAN with IPx2, DNSx2");
+});
+
+test("getExtCRLDistributionPoints test", function() {
+var x = new X509();
+deepEqual(
+x.getExtCRLDistributionPoints("302e3015a013a011860f687474703a2f2f6161612e636f6d2f3015a013a011860f6c6461703a2f2f6161612e636f6d2f"),
+{extname:"cRLDistributionPoints",
+ array: [
+  {dpname: {full: [{uri: "http://aaa.com/"}]}},
+  {dpname: {full: [{uri: "ldap://aaa.com/"}]}}
+]},
+"two dp {http,ldap}://aaa.com");
+
+var x2 = new X509();
+x2.readCertPEM(certGithubPEM);
+deepEqual(
+x2.getExtCRLDistributionPoints(),
+{extname:"cRLDistributionPoints",
+ array: [
+  {dpname: {full: [{uri: "http://crl3.digicert.com/sha2-ev-server-g1.crl"}]}},
+  {dpname: {full: [{uri: "http://crl4.digicert.com/sha2-ev-server-g1.crl"}]}}
+]},
+"for github.com site");
+});
+
+test("getExtCRLDistributionPointsURI github", function() {
+  var x = new X509();
+  x.readCertPEM(certGithubPEM);
+  deepEqual(x.getExtCRLDistributionPointsURI(), 
+            ["http://crl3.digicert.com/sha2-ev-server-g1.crl",
+             "http://crl4.digicert.com/sha2-ev-server-g1.crl"],
+             "for GitHub.com site");
+});
+
+test("getExtCRLDistributionPoints danmarks", function() {
+var x = new X509(danmarksUser1PEM);
+var pExpect = {
+  extname: "cRLDistributionPoints",
+  "array": [
+    {dpname: {full: [{uri: "http://crl.ica02.trust2408.com/ica02.crl"}]}},
+    {dpname: {full: [{dn: {array: [
+                [{ds: "prn", type: "C", value: "DK"}],
+                [{ds: "utf8",type: "O", value: "TRUST2408"}],
+                [{ds: "utf8", type: "CN", value: "TRUST2408 OCES CA II"}],
+                [{ds: "utf8", type: "CN", value: "CRL3117"}]
+              ],
+              "str": "/C=DK/O=TRUST2408/CN=TRUST2408 OCES CA II/CN=CRL3117"}}]}}]};
+deepEqual(x.getExtCRLDistributionPoints(), pExpect, "for Danmarks Apotekerforening User cert");
+});
+
+test("getExtCRLDistributionPointsURI danmarks", function() {
+  var x = new X509();
+  x.readCertPEM(danmarksUser1PEM);
+  deepEqual(x.getExtCRLDistributionPointsURI(), 
+            ["http://crl.ica02.trust2408.com/ica02.crl"],
+             "for Danmarks Apotekerforening User cert");
+});
+
+test("getExtAuthorityInfoAccess", function() {
+var x = new X509();
+
+deepEqual(
+x.getExtAuthorityInfoAccess("3062302f06082b060105050730028623687474703a2f2f636572742e696e742d78332e6c657473656e63727970742e6f72672f302f06082b060105050730018623687474703a2f2f6f6373702e696e742d78332e6c657473656e63727970742e6f72672f"),
+{extname:"authorityInfoAccess",
+ array: [{caissuer: "http://cert.int-x3.letsencrypt.org/"},
+         {ocsp: "http://ocsp.int-x3.letsencrypt.org/"}]},
+"lets encrypt by method argument");
+
+deepEqual(
+x.getExtAuthorityInfoAccess("3062302f06082b060105050730028623687474703a2f2f636572742e696e742d78332e6c657473656e63727970742e6f72672f302f06082b060105050730018623687474703a2f2f6f6373702e696e742d78332e6c657473656e63727970742e6f72672f", true),
+{extname:"authorityInfoAccess",
+ array: [{caissuer: "http://cert.int-x3.letsencrypt.org/"},
+         {ocsp: "http://ocsp.int-x3.letsencrypt.org/"}],
+ critical: true
+},
+"lets encrypt by method argument");
+
+x.readCertPEM(certGithubPEM);
+deepEqual(
+x.getExtAuthorityInfoAccess(),
+{extname:"authorityInfoAccess",
+ array: [{ocsp: "http://ocsp.digicert.com"},
+         {caissuer: "http://cacerts.digicert.com/DigiCertSHA2ExtendedValidationServerCA.crt"}]},
+"github digicert");
+
+});
+
+test("getExtAIAInfo test (DEPRECATED)", function() {
+  var x = new X509();
+  x.readCertPEM(certGithubPEM);
+  deepEqual(x.getExtAIAInfo(),
+            { ocsp: ["http://ocsp.digicert.com"],
+              caissuer: ["http://cacerts.digicert.com/DigiCertSHA2ExtendedValidationServerCA.crt"] },
+            "for GitHub.com site");
+
+});
+
+test("getExtCertificatePolicies", function() {
+var x = new X509(certGithubPEM);
+deepEqual(
+x.getExtCertificatePolicies(),
+{ extname:"certificatePolicies",
+  array: [{
+    policyoid: "2.16.840.1.114412.2.1",
+    array: [{cps: "https://www.digicert.com/CPS"}]
+  }]
+},
+"for GitHub.com site"
+);  
+
+var x1 = new X509(pulseCioGovPEM);
+deepEqual(
+x1.getExtCertificatePolicies(),
+{ extname:"certificatePolicies",
+  array: [{
+    policyoid: "2.23.140.1.2.1"
+  },{
+    policyoid: "1.3.6.1.4.1.44947.1.1.1",
+    array: [
+      {cps: "http://cps.letsencrypt.org"},
+      {unotice: {exptext: {type: "utf8", str: "This Certificate may only be relied upon by Relying Parties and only in accordance with the Certificate Policy found at https://letsencrypt.org/repository/"}}}
+    ]
+  }]
+},
+"for pulse.cio.gov site Let's Encrypt cert");
+
+});
+
+test("getExtPolicyMappings", function() {
+var hIn, pExpect;
+var x = new X509();
+
+hIn = "300c300a0604551d200006020102";
+pExpect = {
+  extname: "policyMappings",
+  critical: true,
+  array: [["anyPolicy", "0.1.2"]]
+};
+deepEqual(x.getExtPolicyMappings(hIn, true), pExpect, JSON.stringify(pExpect));
+
+hIn = "3014300806022a0306020102300806022a0506020105";
+pExpect = {
+  extname: "policyMappings",
+  critical: true,
+  array: [["1.2.3", "0.1.2"],["1.2.5", "0.1.5"]]
+};
+deepEqual(x.getExtPolicyMappings(hIn, true), pExpect, JSON.stringify(pExpect));
+});
+
+
+test("getExtPolicyConstraints", function() {
+var hIn, pExpect;
+var x = new X509();
+
+hIn = "3003810103";
+pExpect = {
+  extname: "policyConstraints",
+  critical: true,
+  inhibit: 3
+};
+deepEqual(x.getExtPolicyConstraints(hIn, true), pExpect, JSON.stringify(pExpect));
+
+hIn = "3003800102";
+pExpect = {
+  extname: "policyConstraints",
+  critical: true,
+  reqexp: 2
+};
+deepEqual(x.getExtPolicyConstraints(hIn, true), pExpect, JSON.stringify(pExpect));
+});
+
+test("getExtInhibitAnyPolicy", function() {
+var hIn, pExpect;
+var x = new X509();
+
+hIn = "020103";
+pExpect = {
+  extname: "inhibitAnyPolicy",
+  critical: true,
+  skip: 3
+};
+deepEqual(x.getExtInhibitAnyPolicy(hIn, true), pExpect, JSON.stringify(pExpect));
+});
+
+// === OLD STATIC METHODS ==================
+
+test("readCertPEM, parseExt aExtInfo github.com", function() {
+  var x = new X509();
+  x.readCertPEM(certGithubPEM);
+  var a = x.aExtInfo;
+  equal(a.length, 9, "num ext=9");
+  equal(a[0].vidx, 1502, "AKID TLV index");
+  equal(a[0].oid, "2.5.29.35", "AKID oid");
+  equal(a[0].critical, false, "AKID critical");
+  equal(a[0].vidx, 1502, "AKID value index");
+  equal(a[1].oid, "2.5.29.14", "SKID oid");
+  equal(a[1].critical, false, "SKID critical");
+  equal(a[2].oid, "2.5.29.17", "SAN oid");
+  equal(a[2].critical, false, "SAN critical");
+  equal(a[3].oid, "2.5.29.15", "KeyUsage oid");
+  equal(a[3].critical, true, "KeyUsage critical");
+  equal(a[3].vidx, 1714, "KeyUsage posV");
+  equal(ASN1HEX.getTLV(x.hex, a[3].vidx), "030205a0", "KeyUsage value 030205a0");
+  equal(a[4].oid, "2.5.29.37", "ExtKeyUsage oid");
+  equal(a[4].critical, false, "ExtKeyUsage critical");
+  equal(a[5].oid, "2.5.29.31", "CDP oid");
+  equal(a[5].critical, false, "CDP critical");
+  equal(a[6].oid, "2.5.29.32", "CertPolicy oid");
+  equal(a[6].critical, false, "CertPolicy critical");
+  equal(a[7].oid, "1.3.6.1.5.5.7.1.1", "AIA oid");
+  equal(a[7].critical, false, "AIA critical");
+  equal(a[8].oid, "2.5.29.19", "basicConstraints oid");
+  equal(a[8].critical, true, "basicConstraints critical");
+  equal(ASN1HEX.getTLV(x.hex, a[8].vidx), "3000", "basicConst value 3000");
+});
+
+test("getExtInfo vidx github.com", function() {
+  var x = new X509();
+  x.readCertPEM(certGithubPEM);
+
+  equal(x.getExtInfo("keyUsage").vidx, 1714, "by keyUsage");
+  equal(x.getExtInfo("2.5.29.15").vidx, 1714, "by 2.5.29.15(=keyUsage)");
+
+  equal(x.getExtInfo("policyConstraints"), undefined,
+        "by policyConstraints -> undefined, no such extension");
+  equal(x.getExtInfo("0.0.0.0"), undefined,
+        "by 0.0.0.0 -> undefined, no such extension");
+});
+
+test("getExtInfo getV github.com", function() {
+  var x = new X509();
+  x.readCertPEM(certGithubPEM);
+
+  var ku = x.getExtInfo("keyUsage");
+  equal(ASN1HEX.getV(x.hex, ku.vidx), "05a0", "by keyUsage");
+
+  equal(x.getExtInfo("policyConstraints"), undefined,
+        "by policyConstraints -> undefined, no such extension");
+  equal(x.getExtInfo("0.0.0.0"), undefined,
+        "by 0.0.0.0 -> undefined, no such extension");
+});
+
+test("getExtInfo getTLV github.com", function() {
+  var x = new X509();
+  x.readCertPEM(certGithubPEM);
+
+  var ku = x.getExtInfo("keyUsage");
+  equal(ASN1HEX.getTLV(x.hex, ku.vidx), "030205a0", "by keyUsage");
+  equal(x.getExtInfo("policyConstraints"), undefined,
+        "by policyConstraints -> undefined, no such extension");
+  equal(x.getExtInfo("0.0.0.0"), undefined,
+        "by 0.0.0.0 -> undefined, no such extension");
+});
+
+test("getExtKeyUsageBin", function() {
+  var x = new X509();
+  x.readCertPEM(certGithubPEM);
+  equal(x.getExtKeyUsageBin(), "101", "101");
+});
+
+test("getExtKeyUsageString", function() {
+  var x = new X509();
+  x.readCertPEM(certGithubPEM);
+  equal(x.getExtKeyUsageString(), "digitalSignature,keyEncipherment", "digitalSignature,keyEncipherment");
+});
+
+
+test("getExtBasicConstraints k1 {cA:true}", function() {
+  var x = new X509();
+  x.readCertHex(k1CertHex);
+  var r = x.getExtBasicConstraints();
+  equal(typeof r, "object");
+  equal(r.cA, true);
+  equal(r.pathLen === undefined, true);
+});
+
+// test/z1.der1-p3 basicConstraints={ca:true, pathlen:3}
+test("getExtBasicConstraints z1.der1-p3 {cA:true,pathLen:3}", function() {
+  var x = new X509();
+  x.readCertHex("3082017630820120a003020102020107300d06092a864886f70d01010b05003019310b3009060355040613025553310a3008060355040a0c0154301e170d3136303431333134313832365a170d3236303431333134313832365a3019310b3009060355040613025553310a3008060355040a0c0154305c300d06092a864886f70d0101010500034b003048024100e8664dd2b40529121568f3b39bc97a62e7ba3c09babdc4f0dcd8df90eb790b9bb645a2b70e3112747b4d3c41b51424895115fef88f79d43eae5b1a4e3518fd590203010001a3533051301d0603551d0e04160414c5473ee200c8e7ad7003dff5420b8cddf4c20e15301f0603551d23041830168014c5473ee200c8e7ad7003dff5420b8cddf4c20e15300f0603551d13040830060101ff020103300d06092a864886f70d01010b0500034100862bf6d5f0c366dd1c71af10df93e2e9e0b7210b6912d1774e27107203f2dc257f9b132285bc1ce8d32d8ffc69470cd6c52ec76b7d68708eca3bbd49556f3005");
+  var r = x.getExtBasicConstraints();
+  equal(typeof r, "object");
+  equal(r.cA, true);
+  equal(r.pathLen, 3);
+});
+
+// test/z1.der2-no basicConstraints has empty value (for EE)
+test("getExtBasicConstraints z1.der2-emp {}", function() {
+var x = new X509();
+x.readCertHex("308201703082011aa003020102020107300d06092a864886f70d01010b05003019310b3009060355040613025553310a3008060355040a0c0154301e170d3136303431333134313934345a170d3236303431333134313934345a3019310b3009060355040613025553310a3008060355040a0c0154305c300d06092a864886f70d0101010500034b003048024100e8664dd2b40529121568f3b39bc97a62e7ba3c09babdc4f0dcd8df90eb790b9bb645a2b70e3112747b4d3c41b51424895115fef88f79d43eae5b1a4e3518fd590203010001a34d304b301d0603551d0e04160414c5473ee200c8e7ad7003dff5420b8cddf4c20e15301f0603551d23041830168014c5473ee200c8e7ad7003dff5420b8cddf4c20e1530090603551d1304023000300d06092a864886f70d01010b050003410039de7f9c2975d1d309edd707609c3052c6adeda0b440c55e86410d303abd3363e4d66a1858c5c7f747fee590c38cf68a9ae39ce394175e36d12308490d3b94f2");
+
+deepEqual(
+x.getExtInfo("basicConstraints"), 
+{critical:false, oid:"2.5.29.19", vidx:576},
+"getExtInfo basicConstraints");
+
+var r = x.getExtBasicConstraints();
+deepEqual(r, {extname:"basicConstraints"}, "der2-emp");
+});
+
+// test/z1.der3-no (no basic constraints)
+test("getExtBasicConstraints z1.der3-no (no basic constraints)", function() {
+var x = new X509();
+x.readCertHex("308201653082010fa003020102020107300d06092a864886f70d01010b05003019310b3009060355040613025553310a3008060355040a0c0154301e170d3136303431333135313332335a170d3236303431333135313332335a3019310b3009060355040613025553310a3008060355040a0c0154305c300d06092a864886f70d0101010500034b003048024100e8664dd2b40529121568f3b39bc97a62e7ba3c09babdc4f0dcd8df90eb790b9bb645a2b70e3112747b4d3c41b51424895115fef88f79d43eae5b1a4e3518fd590203010001a3423040301d0603551d0e04160414c5473ee200c8e7ad7003dff5420b8cddf4c20e15301f0603551d23041830168014c5473ee200c8e7ad7003dff5420b8cddf4c20e15300d06092a864886f70d01010b050003410016f823db6f65546958157ec08c20e736b0243fb6fa2fba6b74ac036f0115786c070d80d94b428f2f9d174169fb19e00fadfa5dbfbd19f27e2782adbd7bec644b");
+var r = x.getExtBasicConstraints();
+equal(r == undefined, true, "no basicConstraints returns undefined");
+});
+
+test("parseExt(CSR) test (csrcertbot1)", function() {
+  var x = new X509();
+  x.parseExt(csrcertbot1);
+  //equal(1, 1);
+  deepEqual(x.aExtInfo, [{"critical":false,"oid":"2.5.29.17","vidx":670}], "aExtInfo=" + JSON.stringify(x.aExtInfo));
+  deepEqual(x.getExtSubjectAltName2(), [["DNS", "nodejs.rz-bsd.my.corp"]], "info=" + JSON.stringify(x.getExtSubjectAltName2()));
+});
+
+test("getDistributionPoint test", function() {
+var x = new X509();
+deepEqual(
+x.getDistributionPoint("3015a013a011860f687474703a2f2f6161612e636f6d2f"),
+{dpname: {full: [{uri: "http://aaa.com/"}]}},
+"{dpname: {full: [{uri: http://aaa.com/}]}}");
+});
+
+test("getDistributionPointName test" , function() {
+var x = new X509();
+deepEqual(
+x.getDistributionPointName("a013a011860f687474703a2f2f6161612e636f6d2f"),
+{full: [{uri: "http://aaa.com/"}]},
+"{full: [{uri: http://aaa.com/}]}");
+});
+
+test("getGeneralNames test" , function() {
+var x = new X509();
+
+var hIn1 = "a011860f687474703a2f2f6161612e636f6d2f";
+var pExpect1 = [{uri: "http://aaa.com/"}];
+deepEqual(x.getGeneralNames(hIn1), pExpect1, "[{uri}]");
+
+var hIn2 = "301ea41c301a310b3009060355040613024a50310b3009060355040a0c025431";
+var pExpect2 = [{
+  dn: {
+    array: [
+      [{type:"C", value:"JP", ds:"prn"}],
+      [{type:"O", value:"T1", ds:"utf8"}]
+    ],
+    str: "/C=JP/O=T1"
+  }
+}];
+deepEqual(x.getGeneralNames(hIn2), pExpect2, "[{dn}]");
+
+});
+
+test("getGeneralName test" , function() {
+var x = new X509();
+var hIn, pExpect;
+
+hIn = "860f687474703a2f2f6161612e636f6d2f";
+pExpect = {uri: "http://aaa.com/"};
+deepEqual(x.getGeneralName(hIn), pExpect, "uri");
+
+hIn = "8708c0a80101ffffff00";
+pExpect = {ip: '192.168.1.1/24'};
+deepEqual(x.getGeneralName(hIn), pExpect, "ip 192.168.1.1/24");
+
+hIn = "a41c301a310b3009060355040613024a50310b3009060355040a0c025431";
+pExpect = {
+  dn: {
+    array: [
+      [{type:"C", value:"JP", ds:"prn"}],
+      [{type:"O", value:"T1", ds:"utf8"}]
+    ],
+    str: "/C=JP/O=T1"
+  }
+};
+deepEqual(x.getGeneralName(hIn), pExpect, "dn");
+});
+
+test("getGeneralName OtherName test" , function() {
+var x = new X509();
+var hIn, pExpect;
+
+hIn = "a0380605604c010301a02f132d323630363139383633333731323536373832303030303030303030303030303030303030303030303030303030";
+pExpect = {
+  other: {
+      oid: "2.16.76.1.3.1",
+      value: {prnstr: {str: '260619863371256782000000000000000000000000000'}}
+  }
+};
+deepEqual(x.getGeneralName(hIn), pExpect, "other brazil");
+
+hIn = "a01f060a2a83088c9b5508050501a0110c0fe5b1b1e794b0e38080e5a4aae9838e";
+pExpect = {
+  other: {
+      oid: "1.2.392.200149.8.5.5.1",
+      value: {utf8str: {str: '山田　太郎'}}
+  }
+};
+deepEqual(x.getGeneralName(hIn), pExpect, "other jpki cn");
+
+});
+
+test("getX500NameRule test", function() {
+var x = new X509();
+
+equal(x.getX500NameRule([[{type:"C",value:"JP",ds:"prn"}],[{type:"O",value:"b",ds:"utf8"}],[{type:"CN",value:"a@a.jp",ds:"vis"}]]), "mixed", "mixed-1");
+equal(x.getX500NameRule([[{type:"C",value:"JP",ds:"prn"}],[{type:"O",value:"b",ds:"utf8"}],[{type:"CN",value:"a@a.jp",ds:"bmp"}]]), "mixed", "mixed-2");
+equal(x.getX500NameRule([[{type:"C",value:"JP",ds:"prn"}],[{type:"O",value:"b",ds:"utf8"}],[{type:"CN",value:"aaa",ds:"ia5"}]]), "mixed", "mixed-3");
+equal(x.getX500NameRule([[{type:"C",value:"JP",ds:"prn"}],[{type:"O",value:"b",ds:"utf8"}],[{type:"OU",value:"aaa",ds:"ia5"}]]), "mixed", "mixed-4");
+
+equal(x.getX500NameRule([[{type:"C",value:"JP",ds:"prn"}],[{type:"O",value:"b",ds:"utf8"}],[{type:"CN",value:"a@a.jp",ds:"ia5"}]]), "utf8", "utf8-1");
+equal(x.getX500NameRule([[{type:"C",value:"JP",ds:"prn"}],[{type:"O",value:"b",ds:"utf8"}],[{type:"CN",value:"a@a.jp",ds:"ia5"}],[{type:"CN",value:"aaa",ds:"utf8"}]]), "utf8", "utf8-1a");
+
+equal(x.getX500NameRule([[{type:"O",value:"JP",ds:"utf8"}],[{type:"O",value:"b",ds:"utf8"}],[{type:"CN",value:"c",ds:"utf8"}]]), "utf8", "utf8-2");
+equal(x.getX500NameRule([[{type:"C",value:"JP",ds:"prn"}],[{type:"O",value:"b",ds:"utf8"}],[{type:"CN",value:"c",ds:"utf8"}]]), "utf8", "utf8-3");
+equal(x.getX500NameRule([[{type:"C",value:"JP",ds:"prn"}],[{type:"O",value:"b",ds:"utf8"}],[{type:"CN",value:"a@a.jp",ds:"ia5"}]]), "utf8", "utf8-4");
+
+equal(x.getX500NameRule([[{type:"C",value:"JP",ds:"prn"}],[{type:"O",value:"b",ds:"prn"}],[{type:"CN",value:"a@a.jp",ds:"ia5"}],[{type:"CN",value:"aaa",ds:"prn"}]]), "prn", "prn-5");
+equal(x.getX500NameRule([[{type:"C",value:"JP",ds:"prn"}],[{type:"O",value:"b",ds:"prn"}],[{type:"CN",value:"a@a.jp",ds:"ia5"}],[{type:"CN",value:"aaa",ds:"utf8"}]]), "mixed", "6-mixed");
+
+
+});
+
+test("getX500Name test", function() {
+var x = new X509();
+var hIn, pExpect;
+
+hIn = "302a310b3009060355040613024a50310a3008060355040a0c0162310f300d060355040316066140612e6a70";
+pExpect = {
+  array: [
+    [{type:"C",value:"JP",ds:"prn"}],
+    [{type:"O",value:"b",ds:"utf8"}],
+    [{type:"CN",value:"a@a.jp",ds:"ia5"}]
+  ],
+  str: "/C=JP/O=b/CN=a@a.jp"
+};
+deepEqual(x.getX500Name(hIn), pExpect, "/C=JP/O=b/CN=a@a.jp")
+
+hIn = "30123110300e06035504030c0743c3a06e617279";
+pExpect = {
+  array: [
+    [{type:"CN",value:"Cànary",ds:"utf8"}]
+  ],
+  str: "/CN=Cànary"
+};
+deepEqual(x.getX500Name(hIn), pExpect, "/CN=Cànary (UTF-8 non ascii)")
+
+hIn = "3081cf310b300906035504061302415431818b308188060355040a1e81800041002d005400720075007300740020004700650073002e0020006600fc007200200053006900630068006500720068006500690074007300730079007300740065006d006500200069006d00200065006c0065006b00740072002e00200044006100740065006e007600650072006b00650068007200200047006d0062004831183016060355040b130f412d54727573742d5175616c2d3031311830160603550403130f412d54727573742d5175616c2d3031";
+pExpect = {
+  array: [
+    [{type:"C",value:"AT",ds:"prn"}],
+    [{type:"O",value:"A-Trust Ges. für Sicherheitssysteme im elektr. Datenverkehr GmbH",ds:"bmp"}],
+    [{type:"OU",value:"A-Trust-Qual-01",ds:"prn"}],
+    [{type:"CN",value:"A-Trust-Qual-01",ds:"prn"}]
+  ],
+  str: "/C=AT/O=A-Trust Ges. für Sicherheitssysteme im elektr. Datenverkehr GmbH/OU=A-Trust-Qual-01/CN=A-Trust-Qual-01"
+};
+deepEqual(x.getX500Name(hIn), pExpect, "BMP(ICS2) non ascii)")
+
+});
+
+test("getRDN test", function() {
+var x = new X509();
+deepEqual(
+x.getRDN("310f300d060355040316066140612e6a70"),
+[{type:"CN",value:"a@a.jp",ds:"ia5"}],
+"[CN a@a.jp ia5]");
+});
+
+test("getAttrTypeAndValue test", function() {
+var x = new X509();
+
+deepEqual(
+x.getAttrTypeAndValue("300d0603550403140631323334a9fa"),
+{type:"CN",value:"1234©ú",ds:"tel"},
+"CN=1234©ú tel");
+
+deepEqual(
+x.getAttrTypeAndValue("300d06035504031206313233343536"),
+{type:"CN",value:"123456",ds:"num"},
+"CN=123456 num");
+
+deepEqual(
+x.getAttrTypeAndValue("300d060355040316066140612e6a70"),
+{type:"CN",value:"a@a.jp",ds:"ia5"},
+"CN=a@a.jp ia5");
+
+deepEqual(
+x.getAttrTypeAndValue("3008060355040a0c0162"),
+{type:"O",value:"b",ds:"utf8"},
+"O=b utf8");
+
+deepEqual(
+x.getAttrTypeAndValue("3009060355040613024a50"),
+{type:"C",value:"JP",ds:"prn"},
+"C=JP prn");
+});
+
+// ===================================
+test("X509.dnarraytostr", function() {
+var x = new X509();
+
+var a1 = [[{type:"C",value:"JP",ds:"prn"}],[{type:"O",value:"T1",ds:"prn"}]];
+var s1 = "/C=JP/O=T1";
+equal(x.dnarraytostr(a1), s1, s1);
+
+var a2 = [
+  [{type:"C",value:"JP",ds:"prn"}],
+  [{type:"O",value:"T1",ds:"prn"},{type:"CN",value:"Bob",ds:"prn"}]
+];
+var s2 = "/C=JP/O=T1+CN=Bob";
+equal(x.dnarraytostr(a2), s2, s2);
+});
+
+// ===nameConstraints================================
+test("X509.getExtNameConstraints", function() {
+var x = new X509();
+var hIn, pExpect;
+
+hIn = "301aa01830168214746573746365727469666963617465732e676f76",
+pExpect = {
+  extname: "nameConstraints",
+  critical: true,
+  permit: [{dns: 'testcertificates.gov'}]
+};
+deepEqual(x.getExtNameConstraints(hIn, true), pExpect, "permit [{dns: testcertificates.gov}]");
+
+hIn = "301aa11830168214746573746365727469666963617465732e676f76",
+pExpect = {
+  extname: "nameConstraints",
+  critical: true,
+  exclude: [{dns: 'testcertificates.gov'}]
+};
+deepEqual(x.getExtNameConstraints(hIn, true), pExpect, "exclude [{dns: testcertificates.gov}]");
+
+hIn = "301ba019301786152e746573746365727469666963617465732e676f76";
+pExpect = {
+  extname: "nameConstraints",
+  critical: true,
+  permit: [{uri: '.testcertificates.gov'}]
+};
+deepEqual(x.getExtNameConstraints(hIn, true), pExpect, "permit [{uri: .testcertificates.gov}]");
+
+hIn = "300ea10c300a8708c0a80101ffffff00";
+pExpect = {
+  extname: "nameConstraints",
+  critical: true,
+  exclude: [{ip: '192.168.1.1/24'}]
+};
+deepEqual(x.getExtNameConstraints(hIn, true), pExpect, "permit [{ip: 192.168.1.1/24}]");
+
+//hIn = "a44c304a310b3009060355040613025553311f301d060355040a131654657374204365727469666963617465732032303131311a3018060355040b13117065726d69747465645375627472656531";
+//pExpect = {};
+//deepEqual(x.getGeneralName(hIn), pExpect, "dn1"); // PASS
+
+hIn = "3052a050304ea44c304a310b3009060355040613025553311f301d060355040a131654657374204365727469666963617465732032303131311a3018060355040b13117065726d69747465645375627472656531";
+pExpect = {
+  extname: "nameConstraints",
+  critical: true,
+  permit: [{dn: {
+    array: [
+      [{ds:"prn",type:"C",value:"US"}],
+      [{ds:"prn",type:"O",value:"Test Certificates 2011"}],
+      [{ds:"prn",type:"OU",value:"permittedSubtree1"}]],
+    str: "/C=US/O=Test Certificates 2011/OU=permittedSubtree1"
+  }}]
+};
+deepEqual(x.getExtNameConstraints(hIn, true), pExpect, "permit [{dn: /C=US/O=Test Certificates 2011/OU=permittedSubtree1}]");
+
+});
+
+test("X509.getGeneralSubtree", function() {
+var x = new X509();
+var hIn, pExpect;
+
+hIn = "30168214746573746365727469666963617465732e676f76";
+pExpect = {dns: 'testcertificates.gov'};
+deepEqual(x.getGeneralSubtree(hIn), pExpect, "{dns: testcertificates.gov}");
+
+hIn = "300a8708c0a80101ffffff00";
+pExpect = {ip: "192.168.1.1/24"};
+deepEqual(x.getGeneralSubtree(hIn), pExpect, "{ip: 192.168.1.1/24}");
+
+hIn = "304ea44c304a310b3009060355040613025553311f301d060355040a131654657374204365727469666963617465732032303131311a3018060355040b13117065726d69747465645375627472656531";
+pExpect = {dn: {
+  array: [
+    [{ds:"prn",type:"C",value:"US"}],
+    [{ds:"prn",type:"O",value:"Test Certificates 2011"}],
+    [{ds:"prn",type:"OU",value:"permittedSubtree1"}]],
+  str: "/C=US/O=Test Certificates 2011/OU=permittedSubtree1"
+}};
+deepEqual(x.getGeneralSubtree(hIn), pExpect, "{dn: /C=US/O=...}");
+
+});
+
+});
+</script>
+  
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture">test markup</div>
+
+<p>
+<a href="../">TOP</a> | 
+<a href="index.html">TEST INDEX</a> | 
+<a href="qunit-do-x509.html">x509</a> | 
+<a href="qunit-do-x509-ext.html">x509-ext</a> | 
+<a href="qunit-do-x509-param.html">x509-param</a> | 
+<a href="qunit-do-x509-key.html">x509-key</a> | 
+<a href="qunit-do-x509-kid.html">x509-kid</a> | 
+<a href="qunit-do-x509-getinfo.html">x509-getinfo</a> | 
+<a href="qunit-do-asn1x509.html">asn1x509</a> | 
+</p>
+
+</body>
+<center><p>&copy; 2015-2022 Kenji Urushima</p></center>
+</html>
+

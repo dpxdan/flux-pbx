@@ -1,0 +1,42 @@
+{
+    "name": "Flux Phone",
+    "short_name": "Flux Phone",
+    "id": "com.fluxtelecom.fluxphone",
+    "start_url": "index.html",
+    "display": "standalone",
+    "background_color": "#fff",
+    "theme_color": "#f6f6f6",
+    "description": "Flux Phone is a fully featured browser based WebRTC SIP phone. Designed to work with Any SIP PBX.",
+    "screenshots": [
+        {
+            "src": "icons/screenshot1.webp",
+            "type": "image/webp",
+            "sizes": "2542x1860",
+            "label": "Flux Telecom"
+        },
+        {
+            "src": "icons/screenshot2.webp",
+            "type": "image/webp",
+            "sizes": "2542x1860",
+            "label": "Flux Telecom"
+        }
+    ],
+    "icons": [
+        {
+            "src": "icons/maskable_192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icons/any_192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

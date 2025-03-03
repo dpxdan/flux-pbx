@@ -1,0 +1,872 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+          "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta charset="utf-8">
+<title>QUnit for OCSP request/response ASN1 Encoder Class 'asn1ocsp.js'</title>
+<script type="text/javascript" src="jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="qunit.js"></script>
+<link rel="stylesheet" href="qunit.css" type="text/css" media="screen" />
+
+<script src="../jsrsasign-latest-all-min.js"></script>
+
+<script src="../ext/cj/cryptojs-312-core-fix.js"></script>
+<script src="../ext/cj/x64-core.js"></script>
+<script src="../ext/cj/cipher-core_min.js"></script>
+<script src="../ext/cj/aes_min.js"></script>
+<script src="../ext/cj/tripledes_min.js"></script>
+<script src="../ext/cj/enc-base64_min.js"></script>
+<script src="../ext/cj/md5_min.js"></script>
+<script src="../ext/cj/sha1_min.js"></script>
+<script src="../ext/cj/sha256_min.js"></script>
+<script src="../ext/cj/sha224_min.js"></script>
+<script src="../ext/cj/sha512_min.js"></script>
+<script src="../ext/cj/sha384_min.js"></script>
+<script src="../ext/cj/ripemd160_min.js"></script>
+<script src="../ext/cj/hmac_min.js"></script>
+<script src="../ext/cj/pbkdf2_min.js"></script>
+
+
+<script src="../ext/prng4.js"></script>
+<script src="../ext/rng.js"></script>
+<script src="../ext/jsbn.js"></script>
+<script src="../ext/jsbn2.js"></script>
+<script src="../ext/rsa.js"></script>
+<script src="../ext/rsa2.js"></script>
+<script src="../ext/base64.js"></script>
+<script src="../src/base64x-1.1.js"></script>
+<script src="../src/asn1hex-1.1.js"></script>
+<script src="../src/rsapem-1.1.js"></script>
+<script src="../src/crypto-1.1.js"></script>
+
+<script src="../src/asn1-1.0.js"></script>
+<script src="../src/x509-1.1.js"></script>
+<script src="../src/asn1x509-1.0.js"></script>
+<script src="../src/keyutil-1.0.js"></script>
+<script src="../src/rsasign-1.2.js"></script>
+
+<script src="../src/asn1ocsp-1.0.js"></script>
+
+<script language="JavaScript" type="text/javascript" src="../ext/ec.js"></script>
+<script language="JavaScript" type="text/javascript" src="../ext/ec-patch.js"></script>
+<script language="JavaScript" type="text/javascript" src="../src/ecdsa-modified-1.0.js"></script>
+<script language="JavaScript" type="text/javascript" src="../src/ecparam-1.0.js"></script>
+<script language="JavaScript" type="text/javascript" src="../src/dsa-2.0.js"></script>
+
+<script type="text/javascript">
+<!--
+// _test/0cert_rsa/z6.prv.p5p.pem RSA 2048bit
+var z6PrvPEM = (function() {/*
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpgIBAAKCAQEAu2TRqUOXPzaxUkmrRWoTbd8K+KFDucLErV41lNtqwhMHGnOO
+EWywNg4VORpFRNP8Z3rIwfqWtpHjCuO97r/M5tKi1lerD+2Y46eBHqFMtf8C4xey
+Sf4cdfvmjRToMq8q3SOAIKJ8PtUWUdtIurMUaA/bYzHsZq/piJoZw0jC1Xx3bZk7
+SiMSGi7TljrVdcPzgPMkE//D+zDLclgAknANcJqHt/CI2Z89R0IaEHAsJsqrN34h
+4jcL1od4Cc2vXfpyQkolobfomTkIzKZ9V34lI8GvLSOtZNdbq4gERm1zxnkHZ9j9
+kWsDZiiB+eCY2XokBIt09DUFgam4oTv3QkWOtwIDAQABAoIBAQChXLpRR3uIml7s
+nbUWi7X5STOYTr0Ty0wygUogSSRPw7S9KT3vcSj3Ev9hcWauUuAodwlCR7bZtRvN
+d7hISu504HIJoeoSSCT7+3Pq3ThCCzoANJp4rpDxY5zuZU9gvYdqbrRY5bGZJUIX
+8HxbD/OFfAoNC6Ml9VpiH1gJ2bCzxQWXCtvcoVHz0s50UXhp0omdo5RR+Jiwu0F5
+tan3+mAbHnGKAXU3Qk1cn2EPsbk7eLCkp6PW8SS0mVmoO7s4jj08OeCvBHULHG/L
+X4N6BJv/Gy5gczKm07xrJSZsf6a9ksckuXdNijdfb6pM5jOZcH8WU389sX6bOJoS
+ik8NfO9ZAoGBANxLQfLMvlCe8oIetcx5R9cFXv3RY3gg/Gk+FXUnArbs68P8w+H2
+Snf7uGsOyUKMce0yBjoQp3qzCughzRjfmhxZ8R7rgc27vrRPrTElmuXPI7rrKjYB
+J0/tseIMbLdScCslF3vGSMtBNx/ON+EAW5i96X838LQSaLeYWDrgO/yNAoGBANnE
+bDysyLYwk9GU/PfqJisGhZMHxkABpyp/dVuV3h7Qlun6yadxVt0Y/97jJ7MsxFEb
+Q6dRbn1NZKUzqGdVGjx72MUz6JQRwv09ykPyA/RVEeDhTVx4d4o5hH2JL0A16n2k
+zm98GC0dDKqSnSTG0uJluglKb/ctEnbaLCkcdqFTAoGBAK6tRge+bZID1wtySnlu
+GZbX/XCJnbPdhAf3YJBadH6T8oafYLtFzdrB0IOjX9bTAmswZVuZZROX8KgMVVLJ
+yqt8bgM0fuKhYiAbpZr41JAw5YYLfpb/5yorsgcqDvJ1/ddYO/y7R3FTruAbZpeU
+7wx4WjO0Kbq/diVOOXfF4grpAoGBAMHW9gGMS5zg4LNNy19iLVdfFscpxG51Cjfp
+/KzpWi5TvgHIGnfRi2CDQD9GM7BpyNXpTu9ArPkcStpCgUR5nED6fJoM+pnStZ51
+wfV5F8wFbUSfSB1nngCL8kNMOaMOWww8BwV1kI+XrA6pMvfpgw3DPzXF7KQ4mpbw
+3R47F93BAoGBAL2y5/x9/vxQavdowHgtRUn8bFqbPyDIRG6WSdqvBYGrZmBDWU0C
+E3/jwBB8VJEvP7i9g4HdqLcASNc7YHByqthkBoRGropp1ht7uTtkhmCy6lAKBpdF
+Uhj87GwKsfvkIdoo3fSix3QXVk9/qZXQbYwE+9yuafWYZjOIRPDsC2+D
+-----END RSA PRIVATE KEY-----
+*/}).toString().match(/\/\*([^]*)\*\//)[1];
+
+var certCA1 = (function() {/*
+-----BEGIN CERTIFICATE-----
+MIIGCDCCA/CgAwIBAgIQKy5u6tl1NmwUim7bo3yMBzANBgkqhkiG9w0BAQwFADCB
+hTELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4G
+A1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxKzApBgNV
+BAMTIkNPTU9ETyBSU0EgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkwHhcNMTQwMjEy
+MDAwMDAwWhcNMjkwMjExMjM1OTU5WjCBkDELMAkGA1UEBhMCR0IxGzAZBgNVBAgT
+EkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMR
+Q09NT0RPIENBIExpbWl0ZWQxNjA0BgNVBAMTLUNPTU9ETyBSU0EgRG9tYWluIFZh
+bGlkYXRpb24gU2VjdXJlIFNlcnZlciBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEP
+ADCCAQoCggEBAI7CAhnhoFmk6zg1jSz9AdDTScBkxwtiBUUWOqigwAwCfx3M28Sh
+bXcDow+G+eMGnD4LgYqbSRutA776S9uMIO3Vzl5ljj4Nr0zCsLdFXlIvNN5IJGS0
+Qa4Al/e+Z96e0HqnU4A7fK31llVvl0cKfIWLIpeNs4TgllfQcBhglo/uLQeTnaG6
+ytHNe+nEKpooIZFNb5JPJaXyejXdJtxGpdCsWTWM/06RQ1A/WZMebFEh7lgUq/51
+UHg+TLAchhP6a5i84DuUHoVS3AOTJBhuyydRReZw3iVDpA3hSqXttn7IzW3uLh0n
+c13cRTCAquOyQQuvvUSH2rnlG51/ruWFgqUCAwEAAaOCAWUwggFhMB8GA1UdIwQY
+MBaAFLuvfgI9+qbxPISOre44mOzZMjLUMB0GA1UdDgQWBBSQr2o6lFoL2JDqElZz
+30O0Oija5zAOBgNVHQ8BAf8EBAMCAYYwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNV
+HSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwGwYDVR0gBBQwEjAGBgRVHSAAMAgG
+BmeBDAECATBMBgNVHR8ERTBDMEGgP6A9hjtodHRwOi8vY3JsLmNvbW9kb2NhLmNv
+bS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBxBggrBgEFBQcB
+AQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
+T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21v
+ZG9jYS5jb20wDQYJKoZIhvcNAQEMBQADggIBAE4rdk+SHGI2ibp3wScF9BzWRJ2p
+mj6q1WZmAT7qSeaiNbz69t2Vjpk1mA42GHWx3d1Qcnyu3HeIzg/3kCDKo2cuH1Z/
+e+FE6kKVxF0NAVBGFfKBiVlsit2M8RKhjTpCipj4SzR7JzsItG8kO3KdY3RYPBps
+P0/HEZrIqPW1N+8QRcZs2eBelSaz662jue5/DJpmNXMyYE7l3YphLG5SEXdoltMY
+dVEVABt0iN3hxzgEQyjpFv3ZBdRdRydg1vs4O2xyopT4Qhrf7W8GjEXCBgCq5Ojc
+2bXhc3js9iPc0d1sjhqPpepUfJa3w/5Vjo1JXvxku88+vZbrac2/4EjxYoIQ5QxG
+V/Iz2tDIY+3GH5QFlkoakdH368+PUq4NCNk+qKBR6cGHdNXJ93SrLlP7u3r7l+L4
+HyaPs9Kg4DdbKDsx5Q5XLVq4rXmsXiBmGqW5prU5wfWYQ//u+aen/e7KJD2AFsQX
+j4rBYKEMrltDR5FL1ZoXX/nUh8HCjLfn4g8wGTeGrODcQgPmlKidrv0PJFGUzpII
+0fxQ8ANAe4hZ7Q7drNJ3gjTcBpUC2JD5Leo31Rpg0Gcg19hCC0Wvgmje3WYkN5Ap
+lBlGGSW4gNfL1IYoakRwJiNiqZ+Gb7+6kHDSVneFeO/qJakXzlByjAA6quPbYzSf
++AZxAeKCINT+b72x
+-----END CERTIFICATE-----
+*/}).toString().match(/\/\*([^]*)\*\//)[1];
+
+// raymii.org cert
+// SBJDN=/OU=Domain Control Validated/OU=PositiveSSL/CN=raymii.org
+// SKID=70585f8fd3eff27167b12b4a5a9faa8f3154a592
+var certEE1 = (function() {/*
+-----BEGIN CERTIFICATE-----
+MIIGQzCCBSugAwIBAgIRANCSgmNDA6l/rfVVaKSMqH4wDQYJKoZIhvcNAQELBQAw
+gZAxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAO
+BgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBMaW1pdGVkMTYwNAYD
+VQQDEy1DT01PRE8gUlNBIERvbWFpbiBWYWxpZGF0aW9uIFNlY3VyZSBTZXJ2ZXIg
+Q0EwHhcNMTYwNTEzMDAwMDAwWhcNMTcwMTIyMjM1OTU5WjBOMSEwHwYDVQQLExhE
+b21haW4gQ29udHJvbCBWYWxpZGF0ZWQxFDASBgNVBAsTC1Bvc2l0aXZlU1NMMRMw
+EQYDVQQDEwpyYXltaWkub3JnMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKC
+AgEA0pWu9Vh4ncEYRLhHC/ro/VKR5m6E93uUEfUsp6aq9A5jP/GPjqmIQjFkZ44T
+KeQlNDSRa5Br3g6kgMm3HLBoI8MAQMyqX+z5VaFMjPz7wM1Y7xc/7d68BJ0gFlHI
+RFEMXxdzbB94IZtrA+fcnZbsdOMel7rT9RfBdW1Szm5/zT8oqBod9xQM7qqVnMYp
+U7hXwp6aGy4m0HFuV1bKcuLfkiwPIXuW+YySBz2cquD2Qtb5EnyxN8cSdHeAvyJj
+digCOInYBpuDzL/mgnPki/YoVXS2le4Du0oQatEmJJhrG1FRhxGLxdq/gUgSWf15
+FkEEQEvERsHsUOn6btQCR4POzlw4eN5ErhH0S41imlbPWVZ5nrxOojzo1SpMiz6q
+a2b5ZQ+WgF3AQANkSEujjE/XqB+U2TyFOWsfYAyAw+/H9BOLsgIoOPsivQ7n970C
+v+u9TVu4l2Oun+m4f+P5maJPahdDF/3Ot3c6AN9RZFyyhpvcfuiYLNfj3P4O7sEd
+HXmHaSLil4XRpgqEafkMh6hvZGgx3stYQyOE9lNZd2GjqfJWmeTiS3UzAz4h0AQ9
+pIOmctitceTjyBYS+YzTq3ztK4MxWH9W1jJiLNK3YgIB1xzznYvyXbE29o9+Qka6
+mU3mHZ2VXJBt0ofWBh4JZVAW1Off31wNekNjvXqzqPMkUbECAwEAAaOCAdcwggHT
+MB8GA1UdIwQYMBaAFJCvajqUWgvYkOoSVnPfQ7Q6KNrnMB0GA1UdDgQWBBRwWF+P
+0+/ycWexK0pan6qPMVSlkjAOBgNVHQ8BAf8EBAMCBaAwDAYDVR0TAQH/BAIwADAd
+BgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwTwYDVR0gBEgwRjA6BgsrBgEE
+AbIxAQICBzArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8uY29t
+L0NQUzAIBgZngQwBAgEwVAYDVR0fBE0wSzBJoEegRYZDaHR0cDovL2NybC5jb21v
+ZG9jYS5jb20vQ09NT0RPUlNBRG9tYWluVmFsaWRhdGlvblNlY3VyZVNlcnZlckNB
+LmNybDCBhQYIKwYBBQUHAQEEeTB3ME8GCCsGAQUFBzAChkNodHRwOi8vY3J0LmNv
+bW9kb2NhLmNvbS9DT01PRE9SU0FEb21haW5WYWxpZGF0aW9uU2VjdXJlU2VydmVy
+Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20wJQYD
+VR0RBB4wHIIKcmF5bWlpLm9yZ4IOd3d3LnJheW1paS5vcmcwDQYJKoZIhvcNAQEL
+BQADggEBAGQii4T9LzvPto4fDWREgejO1vlIKLqfWRzb8EIVkCr3pAxhKLKSfAId
+wHiqhldr0XmUz+otoG8U3mIPVGUllnCfntjRVwchoFSKovpUEAsi3CqAIYKwOWEz
+9zT6YidvTMu2IeLXg71v6NTot7m8XhwO4XXN+ktxiaUrO7UHrB9yk+nxrHEBsRhV
+p6a22RKiMDWAV+TR4aNuWu7rZrv89Lw3oyelhYH1DH1f1Ywo1tfa7tQKU7jqIbMI
+MJUaIjRu+IdHqw3C3+BATEC7KKfXagL0X+GjmJ8/rXL9Con7+ojAk6EuVYb/66D1
+wrj4GSoGxE7qj4A39l6qDymAfUzIt80=
+-----END CERTIFICATE-----
+*/}).toString().match(/\/\*([^]*)\*\//)[1];
+
+// getocsp/wikipedia.org/cur good
+var hOCSPRES_wikipedia_good = "308206490a0100a08206423082063e06092b06010505073001010482062f3082062b3081c5a21604149c4d0099000e8bb0018175a1baf0d025d7a01c47180f32303136313030323033323730325a30753073304b300906052b0e03021a050004140c9e4d9c3dedef84d891e972c7cf8406bc197b07041496de61f1bd1c1629531cc0cc7d3b830040e61a7c02121121a225ba0402d791854854c8ba60686a9b8000180f32303136313030323033323730325aa011180f32303136313030363033323730325aa1233021301f06092b060105050730010204120410d816db66487f2596a9e088a64c0be3e2300d06092a864886f70d01010b05000382010100af4616c9e85297ce43afaab7158414b6d2f536b2175fad97a74ba76b93a6670b858a604d38b24de20efa91bd839ab7f6e4925241437860546bababa6f2b75c345108309932e5887251e9fb15d414121c2a114f9737860be9bfea89d4dedf1dceea99df09f1e6011b60a9d8b10ed393a7e7886c6a182d41ede9c6607322347abebc3d8d7c365d50ad56f309c29574803d37f8c980c142e7e7452403714b981307a0ee8c1654479db924efaedab45f9d13f30200e4265e2862bec76da5dfdf9ed3fc6dc93509ec8000239c8df2269745bd1544168297fdfb01167f4c5903767e2e017b31ee09b1cc8ffdf8366ea45a3e174d996fcdc6e54c112c71a78b3a1d3639a082044b30820447308204433082032ba003020102020c10667b6f3f9f858d64ceadd5300d06092a864886f70d01010b05003066310b300906035504061302424531193017060355040a1310476c6f62616c5369676e206e762d7361313c303a06035504031333476c6f62616c5369676e204f7267616e697a6174696f6e2056616c69646174696f6e204341202d20534841323536202d204732301e170d3136303732353033333230355a170d3136313032353033333230355a30818e310b300906035504061302424531193017060355040a1310476c6f62616c5369676e206e762d7361311530130603550405130c323031363037323531313431314d304b06035504031344476c6f62616c5369676e204f7267616e697a6174696f6e2056616c69646174696f6e204341202d20534841323536202d204732202d204f43535020526573706f6e64657230820122300d06092a864886f70d01010105000382010f003082010a0282010100d24397cf306ae3d952cedba7ebde058bd7301322c865a826de36278a6496fafa5fa90a0517f538f091aa59f5ceb7c12f9dc97a7fa32d6869af6b18e0b9fd9aaeed44b714b9a5d5fcff83ed7517063e681bc1b9fc54322e927e0ff12a3bbfd69f761d5ea22164eca8eaf70ccafa388370da65a6a26d65d515943eacee5696e1a56c1307bb501936865681c547e5d33b589b077fdcb9fe06313255162944d145286c6451ea0d873637cd1040aa9d1d1cfdc76cf09419419e3e6ce9f3bdbcddf46d05d4653bd8b19380b76ef67e90905762813fa28b6745d58cb89098b9b361e04b4df946ce13827d81716f3b53e5041c602fd612739298eb96361cf78da147eb610203010001a381c73081c4301d0603551d0e041604149c4d0099000e8bb0018175a1baf0d025d7a01c47301f0603551d2304183016801496de61f1bd1c1629531cc0cc7d3b830040e61a7c300f06092b060105050730010504020500304c0603551d2004453043304106092b06010401a032015f3034303206082b06010505070201162668747470733a2f2f7777772e676c6f62616c7369676e2e636f6d2f7265706f7369746f72792f300e0603551d0f0101ff04040302078030130603551d25040c300a06082b06010505070309300d06092a864886f70d01010b0500038201010003546551ea9be75e355983697321bf9fbc4fa9c63e444a281262d6fe5b43f244039e874b4a5cf1633bf70158e43b78563c1edbe7af4e90b27a3e71b7f57b3e849bda3064bca416214bf2d183e68dbedfa6952466f01eb103cc634480558510c5eb0167223618009dba0105a2f9d031d149b9ee54bc40c9310e441d85d934ff4c5bffd16242c4921ee5ac115af0a99c30eeb1fa5478c7344e5801168abb348e879b54ee6ed419e5c801410a48bc52f0604f0474eb842fd3220b652c29e1fb406920b6e67c380fa7c56aa3b1c694b4c93a6e522856500010a11aae856c23f779b5192a65779ef7d225dc45dd6c7e10133ecab39df1530e3ba1d061d14f5c151e50";
+
+// getocsp/wikipedia.org/old revoked
+var hOCSPRES_wikipedia_revoked = "308206610a0100a082065a3082065606092b060105050730010104820647308206433081dda21604149c4d0099000e8bb0018175a1baf0d025d7a01c47180f32303136313030323032353332375a30818c308189304b300906052b0e03021a050004140c9e4d9c3dedef84d891e972c7cf8406bc197b07041496de61f1bd1c1629531cc0cc7d3b830040e61a7c02121121972e32a5e5b2e29d472dfedb72d6276ea116180f32303136303432363137343430375aa0030a0100180f32303136313030323032353332375aa011180f32303136313030363032353332375aa1233021301f06092b0601050507300102041204103c18f9358d00d3c25fb7f3fb3194f05b300d06092a864886f70d01010b050003820101003aa5f7fb525ed6955d78903dcf05a67fee4bee3c90032aa94744ee5e3a60d39a7c9a6541c4316f81ce75e3078da2122fcee73f26dc909b99376a871e4c7ff2a358e775a78649c4bf7b6f44c89da1fce212b830611ed80f9e55baa62d98c3f4f352fafac88c2d50ce42c8b9fd5547702ca6d7e37849454908910c8732e9581b537b60145df2ea3e35afa0f5b6c5e16deb41a337bebd3e745aef7c019a80f986c664e7d51c2a079e16c835c565b47b8b6933618fc847547aa3abc9a158621ad23067840ca77a737a07131aae9ce870e192eeb301f6058d143857b3ba885fde78b80431fa95077b96945e20fb61fdc23161caa2e4306c95d86ba521c7011eb60c17a082044b30820447308204433082032ba003020102020c10667b6f3f9f858d64ceadd5300d06092a864886f70d01010b05003066310b300906035504061302424531193017060355040a1310476c6f62616c5369676e206e762d7361313c303a06035504031333476c6f62616c5369676e204f7267616e697a6174696f6e2056616c69646174696f6e204341202d20534841323536202d204732301e170d3136303732353033333230355a170d3136313032353033333230355a30818e310b300906035504061302424531193017060355040a1310476c6f62616c5369676e206e762d7361311530130603550405130c323031363037323531313431314d304b06035504031344476c6f62616c5369676e204f7267616e697a6174696f6e2056616c69646174696f6e204341202d20534841323536202d204732202d204f43535020526573706f6e64657230820122300d06092a864886f70d01010105000382010f003082010a0282010100d24397cf306ae3d952cedba7ebde058bd7301322c865a826de36278a6496fafa5fa90a0517f538f091aa59f5ceb7c12f9dc97a7fa32d6869af6b18e0b9fd9aaeed44b714b9a5d5fcff83ed7517063e681bc1b9fc54322e927e0ff12a3bbfd69f761d5ea22164eca8eaf70ccafa388370da65a6a26d65d515943eacee5696e1a56c1307bb501936865681c547e5d33b589b077fdcb9fe06313255162944d145286c6451ea0d873637cd1040aa9d1d1cfdc76cf09419419e3e6ce9f3bdbcddf46d05d4653bd8b19380b76ef67e90905762813fa28b6745d58cb89098b9b361e04b4df946ce13827d81716f3b53e5041c602fd612739298eb96361cf78da147eb610203010001a381c73081c4301d0603551d0e041604149c4d0099000e8bb0018175a1baf0d025d7a01c47301f0603551d2304183016801496de61f1bd1c1629531cc0cc7d3b830040e61a7c300f06092b060105050730010504020500304c0603551d2004453043304106092b06010401a032015f3034303206082b06010505070201162668747470733a2f2f7777772e676c6f62616c7369676e2e636f6d2f7265706f7369746f72792f300e0603551d0f0101ff04040302078030130603551d25040c300a06082b06010505070309300d06092a864886f70d01010b0500038201010003546551ea9be75e355983697321bf9fbc4fa9c63e444a281262d6fe5b43f244039e874b4a5cf1633bf70158e43b78563c1edbe7af4e90b27a3e71b7f57b3e849bda3064bca416214bf2d183e68dbedfa6952466f01eb103cc634480558510c5eb0167223618009dba0105a2f9d031d149b9ee54bc40c9310e441d85d934ff4c5bffd16242c4921ee5ac115af0a99c30eeb1fa5478c7344e5801168abb348e879b54ee6ed419e5c801410a48bc52f0604f0474eb842fd3220b652c29e1fb406920b6e67c380fa7c56aa3b1c694b4c93a6e522856500010a11aae856c23f779b5192a65779ef7d225dc45dd6c7e10133ecab39df1530e3ba1d061d14f5c151e50";
+
+// getocsp/ry god
+var hOCSPRES_ry_good = "308201d40a0100a08201cd308201c906092b0601050507300101048201ba308201b630819fa216041490af6a3a945a0bd890ea125673df43b43a28dae7180f32303136303932313033333435315a30743072304a300906052b0e03021a050004147ae13ee8a0c42a2cb428cbe7a605461940e2a1e9041490af6a3a945a0bd890ea125673df43b43a28dae7021100d09282634303a97fadf55568a48ca87e8000180f32303136303932313033333435315aa011180f32303136303932353033333435315a300d06092a864886f70d01010b0500038201010077b3201b9cdc3014a30d6568a17208f6bf1e90953a97a3d801df333c5e828a47bb5c64a32b0c4d0c8cf699772d8690e1f86e25df8bc3125cd4b7bf82f63d4fc8d93a7a1048b3f3d539c79d0d637b0d1db6a23c1c6c9c5378fd50f3e6efc143227de92cc218f8a26bf17b79f1531ecc47289c1e26e718486576e7ed676b3206ff0bb9bcf83888189649250074afe16167f92b5b17719055db362d80d83546fd70e7206dd840a63726a1acf523d1f24ea0b372b8b2af4cf8e2625e1ade91666d4a05e332bac1658ce63e0d4effa8a805625048c89f54838fd96d9f39808abe1913b2edc3bcd5bb7fa37ea142d2d2823b56e2a0dc5305055f8102c5db4b178cd042";
+
+$(document).ready(function(){
+
+// ======= TEST ===============================================================
+
+test("OCSPResponse with status success test", function() {
+var _OCSPResponse = KJUR.asn1.ocsp.OCSPResponse;
+var hExpect = "30819a0a0100a0819430819106092b06010505073001010481833081803060a204040212ab180f32303230303930333233353935395a302e302c3017300906052b0e03021a0500040212ab040212ab020212ab8000180f32303230303930333233353935395aa1173015301306092b0601050507300102040604041234abcd300d06092a864886f70d01010b050003030012aba0083006030101030101";
+var params = {
+  resstatus: "successful",
+  restype: "ocspBasic",
+  respid: {key: "12ab"},
+  prodat: "20200903235959Z",
+  array: [{
+    certid: {alg:"sha1",issname:"12ab",isskey:"12ab",sbjsn:"12ab"},
+    status: {status: "good"},
+    thisupdate: "20200903235959Z"
+  }],
+  ext: [
+    {extname: "ocspNonce", hex: "1234abcd"}
+  ],
+  sigalg: "SHA256withRSA",
+  sighex: "12ab",
+  certs: ["030101", "030101"]
+};
+equal((new _OCSPResponse(params)).getEncodedHex(), hExpect, "hex with sighex");
+equal(
+ASN1HEX.dump((new _OCSPResponse(params)).getEncodedHex()),
+ASN1HEX.dump(hExpect),
+"dump with sighex");
+});
+
+test("OCSPResponse with status error test", function() {
+var _OCSPResponse = KJUR.asn1.ocsp.OCSPResponse;
+equal((new _OCSPResponse({resstatus: 1})).getEncodedHex(), "30030a0101", "status=1");
+equal((new _OCSPResponse({resstatus: "internalError"})).getEncodedHex(), "30030a0102", "status=internalError(2)");
+});
+
+test("ResponseBytes test", function() {
+var _ResponseBytes = KJUR.asn1.ocsp.ResponseBytes;
+
+var hExpect = "30819106092b06010505073001010481833081803060a204040212ab180f32303230303930333233353935395a302e302c3017300906052b0e03021a0500040212ab040212ab020212ab8000180f32303230303930333233353935395aa1173015301306092b0601050507300102040604041234abcd300d06092a864886f70d01010b050003030012aba0083006030101030101";
+//"30819106092b060105050730010104818330818030608204040212ab180f32303230303930333233353935395a302e302c3017300906052b0e03021a0500040212ab040212ab020212ab8000180f32303230303930333233353935395aa1173015301306092b0601050507300102040604041234abcd300d06092a864886f70d01010b050003030012aba0083006030101030101";
+var params = {
+  restype: "ocspBasic",
+  respid: {key: "12ab"},
+  prodat: "20200903235959Z",
+  array: [{
+    certid: {alg:"sha1",issname:"12ab",isskey:"12ab",sbjsn:"12ab"},
+    status: {status: "good"},
+    thisupdate: "20200903235959Z"
+  }],
+  ext: [
+    {extname: "ocspNonce", hex: "1234abcd"}
+  ],
+  sigalg: "SHA256withRSA",
+  sighex: "12ab",
+  certs: ["030101", "030101"]
+};
+equal((new _ResponseBytes(params)).getEncodedHex(), hExpect, "hex with sighex");
+equal(
+ASN1HEX.dump((new _ResponseBytes(params)).getEncodedHex()),
+ASN1HEX.dump(hExpect),
+"dump with sighex");
+
+});
+
+
+test("BasicOCSPResponse test", function() {
+var _BasicOCSPResponse = KJUR.asn1.ocsp.BasicOCSPResponse;
+
+var hExpect = "3081803060a204040212ab180f32303230303930333233353935395a302e302c3017300906052b0e03021a0500040212ab040212ab020212ab8000180f32303230303930333233353935395aa1173015301306092b0601050507300102040604041234abcd300d06092a864886f70d01010b050003030012aba0083006030101030101";
+var params = {
+  respid: {key: "12ab"},
+  prodat: "20200903235959Z",
+  array: [{
+    certid: {alg:"sha1",issname:"12ab",isskey:"12ab",sbjsn:"12ab"},
+    status: {status: "good"},
+    thisupdate: "20200903235959Z"
+  }],
+  ext: [
+    {extname: "ocspNonce", hex: "1234abcd"}
+  ],
+  sigalg: "SHA256withRSA",
+  sighex: "12ab",
+  certs: ["030101", "030101"]
+};
+equal((new _BasicOCSPResponse(params)).getEncodedHex(), hExpect, "hex with sighex");
+equal(
+ASN1HEX.dump((new _BasicOCSPResponse(params)).getEncodedHex()),
+ASN1HEX.dump(hExpect),
+"dump with sighex");
+
+var hExpect2 = "308208053081daa2160414295a1ffe023d12ecf198eeecc3924b42f191ea97180f32303230303930343132353235335a3081893081863044300906052b0e03021a05000414f59c687f2418d62a790f7592330756ea85e9470704148ff04b7fa82e4524ae4d50fa639a8bdee2dd1bbc020b04000000000136e982395da116180f32303230303731313136303030305aa0030a0105180f32303230303930343132353235335aa011180f32303230303930383132353235335aa1023000a1233021301f06092b06010505073001020412041084eb2a38e8e20c9ae8f52140aee80560300d06092a864886f70d01010b050003820101005ba579d3f7cddc75288bfbc560dedf9b59bbcf750efa1c71d6e35537555f246a469d73d328d7a21803ed2e7f0b945abc1c0ad75ce3a7f38c800d43435c2351e5187f1df142fcf572b257439c9d2248965f170c34bc928c4d2db68a3fd59c21aa42c60a12936b39216134ee16c1b67c92406aa68cc583eac5b2127324ed9e8e32daef824929d1490a3946c15f0f3af717b1a4733de5a31360df72ee041b829024d3340410cb860b15407c83fdcf5e8a49fa22171201df4224c764372e5c6c96e7acc825624766d7a59a59b45625a29be89df2bd037cc2a3a8d6f33795e647c2902b4e6053eeff78ebdde8766358d163b915eac96c5cbb9e52178e153813d24c30a08206103082060c30820608308203f0a00302010202102b2e6eead975366c148a6edba37c8c07300d06092a864886f70d01010c0500308185310b3009060355040613024742311b30190603550408131247726561746572204d616e636865737465723110300e0603550407130753616c666f7264311a3018060355040a1311434f4d4f444f204341204c696d69746564312b302906035504031322434f4d4f444f205253412043657274696669636174696f6e20417574686f72697479301e170d3134303231323030303030305a170d3239303231313233353935395a308190310b3009060355040613024742311b30190603550408131247726561746572204d616e636865737465723110300e0603550407130753616c666f7264311a3018060355040a1311434f4d4f444f204341204c696d69746564313630340603550403132d434f4d4f444f2052534120446f6d61696e2056616c69646174696f6e205365637572652053657276657220434130820122300d06092a864886f70d01010105000382010f003082010a02820101008ec20219e1a059a4eb38358d2cfd01d0d349c064c70b620545163aa8a0c00c027f1dccdbc4a16d7703a30f86f9e3069c3e0b818a9b491bad03befa4bdb8c20edd5ce5e658e3e0daf4cc2b0b7455e522f34de482464b441ae0097f7be67de9ed07aa753803b7cadf596556f97470a7c858b22978db384e09657d0701860968fee2d07939da1bacad1cd7be9c42a9a2821914d6f924f25a5f27a35dd26dc46a5d0ac59358cff4e9143503f59931e6c5121ee5814abfe7550783e4cb01c8613fa6b98bce03b941e8552dc039324186ecb275145e670de2543a40de14aa5edb67ec8cd6dee2e1d27735ddc453080aae3b2410bafbd4487dab9e51b9d7faee58582a50203010001a382016530820161301f0603551d23041830168014bbaf7e023dfaa6f13c848eadee3898ecd93232d4301d0603551d0e0416041490af6a3a945a0bd890ea125673df43b43a28dae7300e0603551d0f0101ff04040302018630120603551d130101ff040830060101ff020100301d0603551d250416301406082b0601050507030106082b06010505070302301b0603551d200414301230060604551d20003008060667810c010201304c0603551d1f044530433041a03fa03d863b687474703a2f2f63726c2e636f6d6f646f63612e636f6d2f434f4d4f444f52534143657274696669636174696f6e417574686f726974792e63726c307106082b0601050507010104653063303b06082b06010505073002862f687474703a2f2f6372742e636f6d6f646f63612e636f6d2f434f4d4f444f525341416464547275737443412e637274302406082b060105050730018618687474703a2f2f6f6373702e636f6d6f646f63612e636f6d300d06092a864886f70d01010c050003820201004e2b764f921c623689ba77c12705f41cd6449da99a3eaad56666013eea49e6a235bcfaf6dd958e9935980e361875b1dddd50727caedc7788ce0ff79020caa3672e1f567f7be144ea4295c45d0d01504615f28189596c8add8cf112a18d3a428a98f84b347b273b08b46f243b729d6374583c1a6c3f4fc7119ac8a8f5b537ef1045c66cd9e05e9526b3ebada3b9ee7f0c9a66357332604ee5dd8a612c6e5211776896d318755115001b7488dde1c738044328e916fdd905d45d472760d6fb383b6c72a294f8421adfed6f068c45c20600aae4e8dcd9b5e17378ecf623dcd1dd6c8e1a8fa5ea547c96b7c3fe558e8d495efc64bbcf3ebd96eb69cdbfe048f1628210e50c4657f233dad0c863edc61f9405964a1a91d1f7ebcf8f52ae0d08d93ea8a051e9c18774d5c9f774ab2e53fbbb7afb97e2f81f268fb3d2a0e0375b283b31e50e572d5ab8ad79ac5e20661aa5b9a6b539c1f59843ffeef9a7a7fdeeca243d8016c4178f8ac160a10cae5b4347914bd59a175ff9d487c1c28cb7e7e20f30193786ace0dc4203e694a89daefd0f245194ce9208d1fc50f003407b8859ed0eddacd2778234dc069502d890f92dea37d51a60d06720d7d8420b45af8268dedd66243790299419461925b880d7cbd486286a4470262362a99f866fbfba9070d256778578efea25a917ce50728c003aaae3db63349ff8067101e28220d4fe6fbdb1";
+var params2 = {
+  respid: {key: "295a1ffe023d12ecf198eeecc3924b42f191ea97"},
+  prodat: "20200904125253Z",
+  array: [{
+    certid: {
+      alg:"sha1",
+      issname:"f59c687f2418d62a790f7592330756ea85e94707",
+      isskey:"8ff04b7fa82e4524ae4d50fa639a8bdee2dd1bbc",
+      sbjsn:"04000000000136e982395d"
+    },
+    status: {status:"revoked",time:"20200711160000Z",reason:5},
+    thisupdate: "20200904125253Z",
+    nextupdate: "20200908125253Z",
+    ext: []
+  }],
+  ext: [
+    {extname: "ocspNonce", hex: "84eb2a38e8e20c9ae8f52140aee80560"}
+  ],
+  sigalg: "SHA256withRSA",
+  reskey: z6PrvPEM,
+  certs: [certCA1]
+};
+equal((new _BasicOCSPResponse(params2)).getEncodedHex(), hExpect2, "hex with reskey");
+equal(
+ASN1HEX.dump((new _BasicOCSPResponse(params2)).getEncodedHex()),
+ASN1HEX.dump(hExpect2),
+"dump with reskey");
+
+});
+
+test("ResponseData test", function() {
+var _ResponseData = KJUR.asn1.ocsp.ResponseData;
+var hExpect = "3060a204040212ab180f32303230303930333233353935395a302e302c3017300906052b0e03021a0500040212ab040212ab020212ab8000180f32303230303930333233353935395aa1173015301306092b0601050507300102040604041234abcd";
+var params = {
+  respid: {key: "12ab"},
+  prodat: "20200903235959Z",
+  array: [{
+    certid: {alg:"sha1",issname:"12ab",isskey:"12ab",sbjsn:"12ab"},
+    status: {status: "good"},
+    thisupdate: "20200903235959Z"
+  }],
+  ext: [
+    {extname: "ocspNonce", hex: "1234abcd"}
+  ]
+};
+equal((new _ResponseData(params)).getEncodedHex(), hExpect, "hex");
+equal(
+ASN1HEX.dump((new _ResponseData(params)).getEncodedHex()),
+ASN1HEX.dump(hExpect),
+"dump");
+});
+
+test("ResponderID test", function() {
+var _ResponderID = KJUR.asn1.ocsp.ResponderID;
+var pIn, hExpect;
+
+pIn = {key: "12ab"};
+hExpect = "a204040212ab";
+equal((new _ResponderID(pIn)).tohex(), hExpect, "hex by key");
+equal(
+ASN1HEX.dump((new _ResponderID(pIn)).tohex()),
+ASN1HEX.dump(hExpect),
+"dump by key hex");
+
+pIn = {name: {str: "/C=JP/O=O1"}};
+hExpect = "a11c301a310b3009060355040613024a50310b3009060355040a0c024f31";
+equal((new _ResponderID(pIn)).tohex(), hExpect, "hex by name param");
+equal(
+ASN1HEX.dump((new _ResponderID(pIn)).tohex()),
+ASN1HEX.dump(hExpect),
+"dump by name");
+
+pIn = {key: certEE1};
+hExpect = "a216041470585f8fd3eff27167b12b4a5a9faa8f3154a592";
+equal((new _ResponderID(pIn)).tohex(), hExpect, "key by cert");
+equal(
+ASN1HEX.dump((new _ResponderID(pIn)).tohex()),
+ASN1HEX.dump(hExpect),
+"key by cert dump");
+
+pIn = {name: certEE1};
+hExpect = "a150304e3121301f060355040b1318446f6d61696e20436f6e74726f6c2056616c69646174656431143012060355040b130b506f73697469766553534c311330110603550403130a7261796d69692e6f7267";
+equal((new _ResponderID(pIn)).tohex(), hExpect, "name by cert");
+equal(
+ASN1HEX.dump((new _ResponderID(pIn)).tohex()),
+ASN1HEX.dump(hExpect),
+"name by cert dump");
+
+pIn = {key: new X509(certEE1)};
+hExpect = "a216041470585f8fd3eff27167b12b4a5a9faa8f3154a592";
+equal((new _ResponderID(pIn)).tohex(), hExpect, "key by X509 obj");
+equal(
+ASN1HEX.dump((new _ResponderID(pIn)).tohex()),
+ASN1HEX.dump(hExpect),
+"key by X509 obj dump");
+
+pIn = {name: new X509(certEE1)};
+hExpect = "a150304e3121301f060355040b1318446f6d61696e20436f6e74726f6c2056616c69646174656431143012060355040b130b506f73697469766553534c311330110603550403130a7261796d69692e6f7267";
+equal((new _ResponderID(pIn)).tohex(), hExpect, "name by X509 obj");
+equal(
+ASN1HEX.dump((new _ResponderID(pIn)).tohex()),
+ASN1HEX.dump(hExpect),
+"name by X509 obj dump");
+
+});
+
+test("SingleResponseList test", function() {
+var _SingleResponseList = KJUR.asn1.ocsp.SingleResponseList;
+var hExpect = "302e302c3017300906052b0e03021a0500040212ab040212ab020212ab8000180f32303230303930333233353935395a";
+var params = [{
+certid: {alg:"sha1",issname:"12ab",isskey:"12ab",sbjsn:"12ab"},
+status: {status: "good"},
+thisupdate: "20200903235959Z"
+}];
+equal((new _SingleResponseList(params)).getEncodedHex(), hExpect, "hex");
+equal(
+ASN1HEX.dump((new _SingleResponseList(params)).getEncodedHex()),
+ASN1HEX.dump(hExpect),
+"dump");
+});
+
+test("SingleResponse test", function() {
+var _SingleResponse = KJUR.asn1.ocsp.SingleResponse;
+
+var hExpect = "302c3017300906052b0e03021a0500040212ab040212ab020212ab8000180f32303230303930333233353935395a";
+var params = {
+certid: {alg:"sha1",issname:"12ab",isskey:"12ab",sbjsn:"12ab"},
+status: {status: "good"},
+thisupdate: "20200903235959Z"
+};
+equal((new _SingleResponse(params)).getEncodedHex(), hExpect, "hex");
+equal(
+ASN1HEX.dump((new _SingleResponse(params)).getEncodedHex()),
+ASN1HEX.dump(hExpect),
+"dump");
+
+var hExpect2 = "304f3017300906052b0e03021a0500040212ab040212ab020212ab8000180f32303230303930333233353935395aa011180f32303230303931333233353935395aa10e300c300a06032a03040403030101";
+var params2 = {
+certid: {alg:"sha1",issname:"12ab",isskey:"12ab",sbjsn:"12ab"},
+status: {status: "good"},
+thisupdate: "20200903235959Z",
+nextupdate: "20200913235959Z",
+ext: [{extname:"1.2.3.4",extn:"030101"}]
+};
+equal((new _SingleResponse(params2)).getEncodedHex(), hExpect2, "hex with nextupdate and ext");
+equal(
+ASN1HEX.dump((new _SingleResponse(params2)).getEncodedHex()),
+ASN1HEX.dump(hExpect2),
+"dump with nextupdate and ext");
+
+});
+
+test("CertID.setByValue", function() {
+var o1 = new KJUR.asn1.ocsp.CertID();
+o1.setByValue("01020304", "05060708", "123456", "sha1");
+equal(o1.getEncodedHex(), "301c300906052b0e03021a05000404010203040404050607080203123456", "all");
+});
+
+test("CertID.setByCert", function() {
+var o1 = new KJUR.asn1.ocsp.CertID();
+o1.setByCert(certCA1, certEE1, "sha1");
+equal(o1.getEncodedHex(), "304a300906052b0e03021a050004147ae13ee8a0c42a2cb428cbe7a605461940e2a1e9041490af6a3a945a0bd890ea125673df43b43a28dae7021100d09282634303a97fadf55568a48ca87e", "all");
+});
+
+test("CertID constructor by value", function() {
+var o1 = new KJUR.asn1.ocsp.CertID({issname: "01020304",
+                                    isskey: "05060708",
+                                    sbjsn: "123456",
+                                    alg: "sha1"});
+equal(o1.getEncodedHex(), "301c300906052b0e03021a05000404010203040404050607080203123456", "all");
+});
+
+test("CertID constructor by cert", function() {
+var o1 = new KJUR.asn1.ocsp.CertID({alg: "sha1",
+                                    issuerCert: certCA1,
+                                    subjectCert: certEE1});
+equal(o1.getEncodedHex(), "304a300906052b0e03021a050004147ae13ee8a0c42a2cb428cbe7a605461940e2a1e9041490af6a3a945a0bd890ea125673df43b43a28dae7021100d09282634303a97fadf55568a48ca87e", "all");
+});
+
+test("CertStatus test", function() {
+var _CertStatus = KJUR.asn1.ocsp.CertStatus;
+
+equal(
+(new _CertStatus({status: "good"})).getEncodedHex(),
+"8000",
+"good 8000");
+
+equal(
+(new _CertStatus({status: "unknown"})).getEncodedHex(),
+"8200",
+"unknown 8200");
+
+var hRev1 = "a111180f32303230303930333233353935395a";
+var revParam1 = {status: "revoked", time: "20200903235959Z"};
+equal(
+(new _CertStatus(revParam1)).getEncodedHex(),
+hRev1,
+"revoked hex");
+equal(
+ASN1HEX.dump((new _CertStatus(revParam1)).getEncodedHex()),
+ASN1HEX.dump(hRev1),
+"revoked dump");
+
+var hRev2 = "a116180f32303230303930333233353935395aa0030a0103";
+//"a114180f32303230303930333233353935395a0a0103";
+var revParam2 = {status: "revoked", time: "20200903235959Z", reason: 3};
+equal(
+(new _CertStatus(revParam2)).getEncodedHex(),
+hRev2,
+"revoked2 hex with reason3");
+equal(
+ASN1HEX.dump((new _CertStatus(revParam2)).getEncodedHex()),
+ASN1HEX.dump(hRev2),
+"revoked2 dump with reason3");
+
+});
+
+// == BEGIN Request related ================================================
+
+test("Request constructor by cert", function() {
+var o1 = new KJUR.asn1.ocsp.Request({alg: "sha1",
+                                     issuerCert: certCA1,
+                                     subjectCert: certEE1});
+equal(o1.getEncodedHex(), "304c304a300906052b0e03021a050004147ae13ee8a0c42a2cb428cbe7a605461940e2a1e9041490af6a3a945a0bd890ea125673df43b43a28dae7021100d09282634303a97fadf55568a48ca87e", "all");
+});
+
+test("TBSRequest constructor by cert", function() {
+var o1 = new KJUR.asn1.ocsp.TBSRequest({reqList: [
+                                          {alg: "sha1", issuerCert: certCA1, subjectCert: certEE1}
+                                       ]});
+equal(o1.getEncodedHex(), "3050304e304c304a300906052b0e03021a050004147ae13ee8a0c42a2cb428cbe7a605461940e2a1e9041490af6a3a945a0bd890ea125673df43b43a28dae7021100d09282634303a97fadf55568a48ca87e", "all");
+});
+
+test("OCSPRequest constructor by cert", function() {
+var o1 = new KJUR.asn1.ocsp.OCSPRequest({reqList: [
+                                           {alg: "sha1", issuerCert: certCA1, subjectCert: certEE1}
+                                        ]});
+equal(o1.getEncodedHex(), "30523050304e304c304a300906052b0e03021a050004147ae13ee8a0c42a2cb428cbe7a605461940e2a1e9041490af6a3a945a0bd890ea125673df43b43a28dae7021100d09282634303a97fadf55568a48ca87e", "all");
+});
+
+test("OCSPUtil.getRequestHex", function() {
+var h = KJUR.asn1.ocsp.OCSPUtil.getRequestHex(certCA1, certEE1);
+equal(h, "30523050304e304c304a300906052b0e03021a050004147ae13ee8a0c42a2cb428cbe7a605461940e2a1e9041490af6a3a945a0bd890ea125673df43b43a28dae7021100d09282634303a97fadf55568a48ca87e", "hex");
+});
+
+test("OCSPUtil.getOCSPResponseInfo wikipedia good", function() {
+var p1 = KJUR.asn1.ocsp.OCSPUtil.getOCSPResponseInfo(hOCSPRES_wikipedia_good);
+equal(p1.responseStatus, 0, "good responseStatus=0");
+equal(p1.certStatus, "good", "certStatus=good");
+equal(p1.thisUpdate, "20161002032702Z", "thisUpdate=20161002032702Z");
+equal(p1.nextUpdate, "20161006032702Z", "nextUpdate=20161006032702Z");
+});
+
+test("OCSPUtil.getOCSPResponseInfo wikipedia revoked", function() {
+var p1 = KJUR.asn1.ocsp.OCSPUtil.getOCSPResponseInfo(hOCSPRES_wikipedia_revoked);
+equal(p1.responseStatus, 0, "good responseStatus=0");
+equal(p1.certStatus, "revoked", "certStatus=revoked");
+equal(p1.revocationTime, "20160426174407Z", "revocationTime=20160426174407Z");
+equal(p1.thisUpdate, "20161002025327Z", "thisUpdate=20161002025327Z");
+equal(p1.nextUpdate, "20161006025327Z", "nextUpdate=20161006025327Z");
+});
+
+test("OCSPUtil.getOCSPResponseInfo ry good", function() {
+var p1 = KJUR.asn1.ocsp.OCSPUtil.getOCSPResponseInfo(hOCSPRES_ry_good);
+equal(p1.responseStatus, 0, "good responseStatus=0");
+equal(p1.certStatus, "good", "certStatus=good");
+equal(p1.thisUpdate, "20160921033451Z", "thisUpdate=20160921033451Z");
+equal(p1.nextUpdate, "20160925033451Z", "nextUpdate=20160925033451Z");
+});
+
+test("pos test OCSP valid", function() {
+var a1 = ASN1HEX.getChildIdx(hOCSPRES_wikipedia_good, 0);   //
+equal(a1.join("/"), "8/14", "lv1");
+
+var a2 = ASN1HEX.getChildIdx(hOCSPRES_wikipedia_good, 14);  //[1] 
+equal(a2.join("/"), "22", "lv2");
+
+var a3 = ASN1HEX.getChildIdx(hOCSPRES_wikipedia_good, 22);  //[1,0] 
+equal(a3.join("/"), "30/52", "lv3");
+
+var a4 = ASN1HEX.getChildIdx(hOCSPRES_wikipedia_good, 52);  //[1,0,1] 
+equal(a4.join("/"), "60", "lv4");
+
+var a5 = ASN1HEX.getChildIdx(hOCSPRES_wikipedia_good, 60);  //[1,0,1,0]
+equal(a5.join("/"), "68/468/498/1020", "lv5");
+
+var a6 = ASN1HEX.getChildIdx(hOCSPRES_wikipedia_good, 68);  //[1,0,1,0,0] 
+equal(a6.join("/"), "74/122/156/394", "lv6");
+
+var a7 = ASN1HEX.getChildIdx(hOCSPRES_wikipedia_good, 156); //[1,0,1,0,0,2] 
+equal(a7.join("/"), "160", "lv7");
+
+var a8 = ASN1HEX.getChildIdx(hOCSPRES_wikipedia_good, 160); //[1,0,1,0,0,2,0] 
+equal(a8.join("/"), "164/318/322/356", "lv8");
+
+equal(ASN1HEX.getTLV(hOCSPRES_wikipedia_good, 318), "8000", "i2 8000 good");
+equal(ASN1HEX.getTLV(hOCSPRES_wikipedia_good, 322), "180f32303136313030323033323730325a", "i3 gentime1");
+equal(ASN1HEX.getTLV(hOCSPRES_wikipedia_good, 356), "a011180f32303136313030363033323730325a", "i4 [0] gentime2");
+
+equal(ASN1HEX.getIdxbyList(hOCSPRES_wikipedia_good, 0, [1,0,1,0,0,2,0,1]),
+      318, "i good 318");
+equal(ASN1HEX.getTLVbyList(hOCSPRES_wikipedia_good, 0, [1,0,1,0,0,2,0,1]),
+      "8000", "o good 8000");
+equal(ASN1HEX.getIdxbyList(hOCSPRES_wikipedia_good, 0, [1,0,1,0,0,2,0,2]),
+      322, "i t1 322");
+equal(ASN1HEX.getIdxbyList(hOCSPRES_wikipedia_good, 0, [1,0,1,0,0,2,0,3]),
+      356, "i t2 356");
+});
+
+test("pos test OCSP revoked", function() {
+equal(ASN1HEX.getTLVbyList(hOCSPRES_wikipedia_revoked, 0, [1,0,1,0,0,2,0,1]),
+      "a116180f32303136303432363137343430375aa0030a0100", "o revoked");
+equal(ASN1HEX.getTLVbyList(hOCSPRES_wikipedia_revoked, 0, [1,0,1,0,0,2,0,1,0]),
+      "180f32303136303432363137343430375a", "o revoked time");
+
+equal(ASN1HEX.getTLVbyList(hOCSPRES_wikipedia_revoked, 0, [1,0,1,0,0,2,0,2]),
+      "180f32303136313030323032353332375a", "o t1");
+equal(ASN1HEX.getTLVbyList(hOCSPRES_wikipedia_revoked, 0, [1,0,1,0,0,2,0,3,0]),
+      "180f32303136313030363032353332375a", "o t2");
+});
+
+test("OCSPParser.getOCSPResponse test", function() {
+var obj = new KJUR.asn1.ocsp.OCSPParser();
+
+var h = "30819a0a0100a0819430819106092b06010505073001010481833081803060a204040212ab180f32303230303930333233353935395a302e302c3017300906052b0e03021a0500040212ab040212ab020212ab8000180f32303230303930333233353935395aa1173015301306092b0601050507300102040604041234abcd300d06092a864886f70d01010b050003030012aba0083006030101030101";
+var param = {
+  resstatus: 0,
+  restype: "ocspBasic",
+  respid: {key: "12ab"},
+  prodat: "20200903235959Z",
+  array: [{
+    certid: {alg:"sha1",issname:"12ab",isskey:"12ab",sbjsn:"12ab"},
+    status: {status: "good"},
+    thisupdate: "20200903235959Z"
+  }],
+  ext: [
+    {extname: "ocspNonce", hex: "1234abcd"}
+  ],
+  alg: "SHA256withRSA",
+  sighex: "12ab",
+  certs: ["030101", "030101"]
+};
+deepEqual(obj.getOCSPResponse(h), param, "successful + responseBytes");
+
+var h2 = "30030a0106";
+var param2 = {resstatus: 6};
+deepEqual(obj.getOCSPResponse(h2), param2, "unauhorized(6)");
+});
+
+test("OCSPParser.getResponseBytes test", function() {
+var obj = new KJUR.asn1.ocsp.OCSPParser();
+
+var h = "30819106092b06010505073001010481833081803060a204040212ab180f32303230303930333233353935395a302e302c3017300906052b0e03021a0500040212ab040212ab020212ab8000180f32303230303930333233353935395aa1173015301306092b0601050507300102040604041234abcd300d06092a864886f70d01010b050003030012aba0083006030101030101";
+var param = {
+  restype: "ocspBasic",
+  respid: {key: "12ab"},
+  prodat: "20200903235959Z",
+  array: [{
+    certid: {alg:"sha1",issname:"12ab",isskey:"12ab",sbjsn:"12ab"},
+    status: {status: "good"},
+    thisupdate: "20200903235959Z"
+  }],
+  ext: [
+    {extname: "ocspNonce", hex: "1234abcd"}
+  ],
+  alg: "SHA256withRSA",
+  sighex: "12ab",
+  certs: ["030101", "030101"]
+};
+deepEqual(obj.getResponseBytes(h), param, "test1");
+});
+
+test("OCSPParser.getBasicOCSPResponse test", function() {
+var obj = new KJUR.asn1.ocsp.OCSPParser();
+
+var h = "3081803060a204040212ab180f32303230303930333233353935395a302e302c3017300906052b0e03021a0500040212ab040212ab020212ab8000180f32303230303930333233353935395aa1173015301306092b0601050507300102040604041234abcd300d06092a864886f70d01010b050003030012aba0083006030101030101";
+var param = {
+  respid: {key: "12ab"},
+  prodat: "20200903235959Z",
+  array: [{
+    certid: {alg:"sha1",issname:"12ab",isskey:"12ab",sbjsn:"12ab"},
+    status: {status: "good"},
+    thisupdate: "20200903235959Z"
+  }],
+  ext: [
+    {extname: "ocspNonce", hex: "1234abcd"}
+  ],
+  alg: "SHA256withRSA",
+  sighex: "12ab",
+  certs: ["030101", "030101"]
+};
+deepEqual(obj.getBasicOCSPResponse(h), param, "test1");
+});
+
+test("OCSPParser.getResponseData test", function() {
+var obj = new KJUR.asn1.ocsp.OCSPParser();
+
+var h = "3060a204040212ab180f32303230303930333233353935395a302e302c3017300906052b0e03021a0500040212ab040212ab020212ab8000180f32303230303930333233353935395aa1173015301306092b0601050507300102040604041234abcd";
+var param = {
+  respid: {key: "12ab"},
+  prodat: "20200903235959Z",
+  array: [{
+    certid: {alg:"sha1",issname:"12ab",isskey:"12ab",sbjsn:"12ab"},
+    status: {status: "good"},
+    thisupdate: "20200903235959Z"
+  }],
+  ext: [
+    {extname: "ocspNonce", hex: "1234abcd"}
+  ]
+};
+deepEqual(obj.getResponseData(h), param, "test1");
+});
+
+test("OCSPParser.getResponderID test", function() {
+var obj = new KJUR.asn1.ocsp.OCSPParser();
+
+var h = "a204040212ab";
+var param = {key: "12ab"};
+deepEqual(obj.getResponderID(h), param, "key");
+
+var h2 = "a11c301a310b3009060355040613024a50310b3009060355040a0c024f31";
+var param2 = {name: {
+  array: [[{type: "C",value:"JP",ds:"prn"}],[{type:"O",value:"O1",ds:"utf8"}]],
+  str: "/C=JP/O=O1"
+}};
+deepEqual(obj.getResponderID(h2), param2, "name");
+});
+
+test("OCSPParser.getSingleResponseList test", function() {
+var obj = new KJUR.asn1.ocsp.OCSPParser();
+
+var h = "302e302c3017300906052b0e03021a0500040212ab040212ab020212ab8000180f32303230303930333233353935395a";
+var param = [{
+certid: {alg:"sha1",issname:"12ab",isskey:"12ab",sbjsn:"12ab"},
+status: {status: "good"},
+thisupdate: "20200903235959Z"
+}];
+deepEqual(obj.getSingleResponseList(h), param, "test");
+});
+
+test("OCSPParser.getSingleResponse test", function() {
+var obj = new KJUR.asn1.ocsp.OCSPParser();
+
+var h = "302c3017300906052b0e03021a0500040212ab040212ab020212ab8000180f32303230303930333233353935395a";
+var param = {
+certid: {alg:"sha1",issname:"12ab",isskey:"12ab",sbjsn:"12ab"},
+status: {status: "good"},
+thisupdate: "20200903235959Z"
+};
+deepEqual(obj.getSingleResponse(h), param, "test");
+
+var h2 = "303f3017300906052b0e03021a0500040212ab040212ab020212ab8000180f32303230303930333233353935395aa011180f32303230303931333233353935395a";
+var param2 = {
+certid: {alg:"sha1",issname:"12ab",isskey:"12ab",sbjsn:"12ab"},
+status: {status: "good"},
+thisupdate: "20200903235959Z",
+nextupdate: "20200913235959Z"
+};
+deepEqual(obj.getSingleResponse(h2), param2, "test2");
+
+// raising error in extension
+var h3 = "304f3017300906052b0e03021a0500040212ab040212ab020212ab8000180f32303230303930333233353935395aa011180f32303230303931333233353935395aa10e300c300a06032a03040403030101";
+var param3 = {
+certid: {alg:"sha1",issname:"12ab",isskey:"12ab",sbjsn:"12ab"},
+status: {status: "good"},
+thisupdate: "20200903235959Z",
+nextupdate: "20200913235959Z",
+ext: [{extname:"1.2.3.4",extn:"030101"}]
+};
+deepEqual(obj.getSingleResponse(h3), param3, "test3");
+
+});
+
+test("OCSPParser.getCertStatus test", function() {
+var obj = new KJUR.asn1.ocsp.OCSPParser();
+
+var h1 = "8000";
+var param1 = {status: "good"};
+deepEqual(obj.getCertStatus(h1),param1,"good");
+
+var h2 = "8200";
+var param2 = {status: "unknown"};
+deepEqual(obj.getCertStatus(h2),param2,"unknown");
+
+var h3 = "a111180f32303230303930333233353935395a";
+var param3 = {status: "revoked", time: "20200903235959Z"};
+deepEqual(obj.getCertStatus(h3),param3,"revoked");
+});
+
+// getocsp/digicertcom-ev-unauthorized
+test("OCSPParser.getOCSPRequest test", function() {
+var obj = new KJUR.asn1.ocsp.OCSPParser();
+var h = "3051304f304d304b3049300906052b0e03021a05000414105fa67a80089db5279f35ce830b43889ea3c70d04140f80611c823161d52f28e78d4638b42ce1c6d9e202100fef62075d715dc5e1d8bd03775c96860";
+var param = {array: [{
+  "alg": "sha1",
+  "issname": "105fa67a80089db5279f35ce830b43889ea3c70d",
+  "isskey": "0f80611c823161d52f28e78d4638b42ce1c6d9e2",
+  "sbjsn": "0fef62075d715dc5e1d8bd03775c9686"
+}]};
+deepEqual(
+obj.getOCSPRequest(h),
+param,
+"digicert ev");
+});
+
+// getocsp/digicertcom-ev-unauthorized
+test("OCSPParser.getTBSRequest test", function() {
+var obj = new KJUR.asn1.ocsp.OCSPParser();
+var h = "304f304d304b3049300906052b0e03021a05000414105fa67a80089db5279f35ce830b43889ea3c70d04140f80611c823161d52f28e78d4638b42ce1c6d9e202100fef62075d715dc5e1d8bd03775c9686";
+var param = {array: [{
+  "alg": "sha1",
+  "issname": "105fa67a80089db5279f35ce830b43889ea3c70d",
+  "isskey": "0f80611c823161d52f28e78d4638b42ce1c6d9e2",
+  "sbjsn": "0fef62075d715dc5e1d8bd03775c9686"
+}]};
+deepEqual(
+obj.getTBSRequest(h),
+param,
+"digicert ev");
+
+// getocsp/data/twitter.com.req.*
+var h2 = "3074304d304b3049300906052b0e03021a05000414cf26f518fac97e8f8cb342e01c2f6a109e8e5f0a04145168ff90af0207753cccd9656462a212b859723b02100b5897d85529ec36e528bebe1ae34765a2233021301f06092b060105050730010204120410b1b94016d523b57b34ae7f5710a40b02";
+var param2 = {
+  array: [{
+    "alg": "sha1",
+    "issname": "cf26f518fac97e8f8cb342e01c2f6a109e8e5f0a",
+    "isskey": "5168ff90af0207753cccd9656462a212b859723b",
+    "sbjsn": "0b5897d85529ec36e528bebe1ae34765"
+  }],
+  ext: [{
+    "extname": "ocspNonce",
+    "hex": "b1b94016d523b57b34ae7f5710a40b02"
+  }]
+};
+deepEqual(
+obj.getTBSRequest(h2),
+param2,
+"twitter with ocspNonce ext");
+
+});
+
+// getocsp/digicertcom-ev-unauthorized
+test("OCSPParser.getRequestList test", function() {
+var obj = new KJUR.asn1.ocsp.OCSPParser();
+var h = "304d304b3049300906052b0e03021a05000414105fa67a80089db5279f35ce830b43889ea3c70d04140f80611c823161d52f28e78d4638b42ce1c6d9e202100fef62075d715dc5e1d8bd03775c9686";
+var param = [{
+  "alg": "sha1",
+  "issname": "105fa67a80089db5279f35ce830b43889ea3c70d",
+  "isskey": "0f80611c823161d52f28e78d4638b42ce1c6d9e2",
+  "sbjsn": "0fef62075d715dc5e1d8bd03775c9686"
+}];
+deepEqual(
+obj.getRequestList(h),
+param,
+"digicert ev");
+});
+
+// getocsp/digicertcom-ev-unauthorized
+test("OCSPParser.getRequest test", function() {
+var obj = new KJUR.asn1.ocsp.OCSPParser();
+var h = "304b3049300906052b0e03021a05000414105fa67a80089db5279f35ce830b43889ea3c70d04140f80611c823161d52f28e78d4638b42ce1c6d9e202100fef62075d715dc5e1d8bd03775c9686";
+var param = {
+  "alg": "sha1",
+  "issname": "105fa67a80089db5279f35ce830b43889ea3c70d",
+  "isskey": "0f80611c823161d52f28e78d4638b42ce1c6d9e2",
+  "sbjsn": "0fef62075d715dc5e1d8bd03775c9686"
+};
+deepEqual(
+obj.getRequest(h),
+param,
+"digicert ev");
+});
+
+// getocsp/digicertcom-ev-unauthorized
+test("OCSPParser.getCertID test", function() {
+var obj = new KJUR.asn1.ocsp.OCSPParser();
+var h = "3049300906052b0e03021a05000414105fa67a80089db5279f35ce830b43889ea3c70d04140f80611c823161d52f28e78d4638b42ce1c6d9e202100fef62075d715dc5e1d8bd03775c9686";
+var param = {
+  "alg": "sha1",
+  "issname": "105fa67a80089db5279f35ce830b43889ea3c70d",
+  "isskey": "0f80611c823161d52f28e78d4638b42ce1c6d9e2",
+  "sbjsn": "0fef62075d715dc5e1d8bd03775c9686"
+};
+deepEqual(
+obj.getCertID(h),
+param,
+"digicert ev");
+});
+
+});
+
+-->
+</script>
+  
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture">test markup</div>
+<a href="index.html">TEST INDEX</a> | 
+<a href="../api/index.html">API</a> | 
+</body>
+</html>

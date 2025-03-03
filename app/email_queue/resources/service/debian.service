@@ -1,0 +1,32 @@
+; Author: Daniel Paixao <daniel@flux.net.br>
+; cp /var/www/html/fluxpbx/app/email_queue/resources/service/debian.service /etc/systemd/system/email_queue.service
+; systemctl enable email_queue
+; systemctl start email_queue
+; systemctl daemon-reload
+
+[Unit]
+Description=FluxPBX Email Queue
+Wants=network-online.target
+Requires=network.target local-fs.target
+;Requires=network.target local-fs.target postgresql.service
+After=network.target network-online.target local-fs.target
+;After=network.target network-online.target local-fs.target postgresql.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+;Type=forking
+PIDFile=/var/run/fluxpbx/email_queue.pid
+WorkingDirectory=/var/www/html/fluxpbx
+;Environment="USER=www-data"
+;Environment="GROUP=www-data"
+;EnvironmentFile=-/etc/default/fluxpbx
+ExecStartPre=/bin/mkdir -p /var/run/fluxpbx
+;ExecStartPre=/bin/chown -R ${USER}:${GROUP} /var/www/html/fluxpbx
+ExecStart=/usr/bin/php /var/www/html/fluxpbx/app/email_queue/resources/service/email_queue.php
+TimeoutSec=55s
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+Also=

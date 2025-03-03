@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>Dev WebRTC</title>
+    <!-- MDB icon -->
+    <link rel="icon" href="/app/flux_phone/prod/assets/img/favicon.ico" type="image/x-icon" />
+    <!-- Font Awesome -->
+<!--    <script type="text/javascript"
+    src="https://gcloud.flux.cloud:3006/app.js"></script>-->
+    <link
+      rel="stylesheet"
+      href="/resources/fontawesome6/css/all.css"
+    />
+    <!-- Google Fonts Roboto -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap"
+    />
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css?family=Exo" rel="stylesheet">
+<!--    <link id="pagestyle" href="/app/flux_phone/prod/assets/css/material-dashboard.css?v=3.0.0" rel="stylesheet" />-->
+    <!-- MDB -->
+    
+       <link rel="stylesheet" href="/app/flux_phone/prod/assets/css/mdb.min.css" /> 
+       <link rel="stylesheet" href="/app/flux_phone/prod/assets/css/style_v1.css" />
+    <link rel="stylesheet" href="/resources/datatables/datatables-bs4/css/dataTables.bootstrap4.min.css"/>
+    <link rel="stylesheet" href="/resources/datatables/datatables-responsive/css/responsive.bootstrap4.min.css"/>
+
+   
+  </head>
+  <body id="sipClient">
+    <!-- Start your project here-->
+    <div class="container main-content">
+   <ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
+     <li class="nav-item tabPhone" id="tabPhone" role="presentation">
+           <a
+             class="nav-link active"
+             id="tab-phone"
+             title="Ramal"
+             data-mdb-toggle="pill"
+             href="#pills-phone"
+             role="tab"
+             aria-controls="pills-phone"
+             aria-selected="true"
+             ><span><i class="fas fa-phone fa-lg"></i></span></a
+           >
+         </li>
+     <li class="nav-item me-3 me-lg-1 tabHistory" id="tabHistory" role="presentation">
+       <a
+         class="nav-link"
+         id="tab-history"
+         title="Histórico de Chamadas"
+         data-mdb-toggle="pill"
+         href="#pills-history"
+         role="tab"
+         aria-controls="pills-history"
+         aria-selected="false"
+         ><span><i class="fa-sharp fa-solid fa-clock-rotate-left"></i></span></a
+       >
+     </li>
+     <li class="nav-item tabContacts" id="tabContacts" role="presentation">
+       <a
+         class="nav-link"
+         id="tab-contacts"
+         title="Contatos"
+         data-mdb-toggle="pill"
+         href="#pills-contacts"
+         role="tab"
+         aria-controls="pills-contacts"
+         aria-selected="false"
+         ><span><i class="fas fa-address-book fa-lg"></i></span></a
+       >
+     </li>
+     <li class="nav-item tabSettings" id="tabSettings" role="presentation">
+       <a
+         class="nav-link"
+         id="tab-settings"
+         title="Configurações"
+         data-mdb-toggle="pill"
+         href="#pills-settings"
+         role="tab"
+         aria-controls="pills-settings"
+         aria-selected="false"
+         ><span><i class="fas fa-user-gear fa-lg"></i></span></a
+       >
+     </li>
+   </ul>
+   <!-- Pills content -->
+   <div id="pillsContent" class="tab-content">
+   <div class="tab-pane fade show active" id="pills-phone" role="tabpanel" aria-labelledby="tab-phone">
+   <video id="remoteVideo" hidden="hidden"></video>
+   <video id="localVideo" hidden="hidden" muted="muted"></video>
+   <div class="clearfix sipStatus">
+               <div id="txtCallStatus" class="pull-right">&nbsp;</div>
+               <div id="txtRegStatus" class="pull-left"></div>
+             </div>
+      <div class="form-group" id="phoneUI">
+               <div class="input-group">
+              <!-- <div name="number" id="output" class="form-control text-center input-sm" style="border: none;">
+               </div>-->
+               <input type="text" name="number" id="numDisplay" class="form-control text-center input-sm" value="" placeholder="Insira o número..." autocomplete="off" />
+               </div>
+               <div class="container input-group" style="top: 50px;width: 100%;float: left;">
+              <div class="container sip-dialpad" id="sip-dialpad" style="background-color: #fff;border-radius: 20px;">
+                              <button type="button" class="btn btn-default digit" data-digit="1">1<span>&nbsp;</span></button>
+                              <button type="button" class="btn btn-default digit" data-digit="2">2<span>ABC</span></button>
+                              <button type="button" class="btn btn-default digit" data-digit="3">3<span>DEF</span></button>
+                              <button type="button" class="btn btn-default digit" data-digit="4">4<span>GHI</span></button>
+                              <button type="button" class="btn btn-default digit" data-digit="5">5<span>JKL</span></button>
+                              <button type="button" class="btn btn-default digit" data-digit="6">6<span>MNO</span></button>
+                              <button type="button" class="btn btn-default digit" data-digit="7">7<span>PQRS</span></button>
+                              <button type="button" class="btn btn-default digit" data-digit="8">8<span>TUV</span></button>
+                              <button type="button" class="btn btn-default digit" data-digit="9">9<span>WXYZ</span></button>
+                              <button type="button" class="btn btn-default digit" data-digit="*">*<span>&nbsp;</span></button>
+                              <button type="button" class="btn btn-default digit" data-digit="0">0<span>+</span></button>
+                              <button type="button" class="btn btn-default digit" data-digit="#">#<span>&nbsp;</span></button>
+                              <div class="clearfix">&nbsp;</div>
+                              <button class="btn btn-info btn-block btnCall" title="Discar">
+                              <i class="fa fa-play"></i> Discar
+                              </button>
+                            </div>
+               </div>
+              <!-- <div class="container input-group" style="top: 50px;width: 50%;float: right;">
+				 <div id="sip-log-phone" class="panel panel-default hide" style="width: 100%;">
+						  <div class="panel-heading">
+							<h6 class="text-muted panel-title">Chamadas Recentes <span class="pull-right"><i class="fa fa-trash text-muted sipLogClear" title="Clear Log" style="cursor: pointer;"></i></span></h6>
+						  </div>
+						  <div id="sip-logitems-phone" class="list-group">
+							<p class="text-muted text-center">Nenhuma chamada recente.</p>
+						  </div>
+						</div>
+                    </div>-->
+             </div>
+                       </div>
+   <div class="tab-pane fade" id="pills-history" role="tabpanel" aria-labelledby="tab-history">
+        <div class="well-sip">
+               <div id="sip-log" class="panel panel-default hide">
+                                 <div class="panel-heading">
+                                   <h6 class="text-muted panel-title">Chamadas Recentes <span class="pull-right"><i class="fa fa-trash text-muted sipLogClear" title="Clear Log" style="cursor: pointer;"></i></span></h6>
+                                 </div>
+                                 <div id="sip-logitems" class="list-group">
+                                   <p class="text-muted text-center">Nenhuma chamada recente.</p>
+                                 </div>
+                               </div>
+              </div>
+        </div>
+   <div class="tab-pane fade" id="pills-contacts" role="tabpanel" aria-labelledby="tab-contacts">
+            <div id="contacts" class="table-responsive table-full-width">
+
+
+            </div>
+          </div>
+   <div class="tab-pane fade" id="pills-settings" role="tabpanel" aria-labelledby="tab-settings">
+   <div class="text-center mb-3">
+                     <p>Configurações:</p>
+                     <button type="button" class="btn btn-primary btn-floating mx-1 btnExtSettings" title="Configurações de Ramal">
+						<i class="fa fa-cloud"></i>
+					  </button>
+                     <button type="button" data-mdb-toggle="modal" data-mdb-target="#audioModal" class="btn btn-primary btn-floating mx-1 btnAudioSettings" title="Configurações de Áudio">
+                       <i class="fa fa-volume-control-phone"></i>
+                     </button>
+                     <button type="button" class="btn btn-primary btn-floating mx-1 btnAgentSettings" title="Configurações de Agente">
+                       <i class="fab fa-teamspeak"></i>
+                     </button>
+                     <button id="asknotificationpermission" type="button" class="btn btn-primary btn-floating mx-1 btnNotifySettings" title="Configurações de Notificação">
+                       <i class="fa fa-envelope"></i>
+                     </button>
+                   </div>
+   
+   <form id="extension-settings">
+                            
+                                 <div class="form-group form-outline mb-4">
+                                   <input type="text" id="extName" name="extName" class="form-control" />
+                                   <label class="form-label" for="extName">Nome</label>
+                                 </div>
+                           
+                                 <div class="form-group form-outline mb-4">
+                                   <input type="text" id="extUsername" name="extUsername" class="form-control" />
+                                   <label class="form-label" for="extUsername">Ramal</label>
+                                 </div>
+                                 
+                                 <div class="form-group form-outline mb-4">
+                                   <input type="password" id="extPassword" name="extPassword" class="form-control" />
+                                   <label class="form-label" for="extPassword">Senha</label>
+                                 </div>
+                        
+                                 <button type="button" class="btn btn-primary btn-block mb-3 btnSaveExt">Salvar</button>
+                               </form>
+
+   <div class="modal top fade" id="audioModal" tabindex="-1" aria-labelledby="audioModalLabel" aria-hidden="true" data-mdb-backdrop="true" data-mdb-keyboard="true">
+			 <div class="modal-dialog">
+				 <div class="modal-content text-left">
+					 <div class="modal-header h5 text-white bg-primary justify-content-left">
+						 Configurações de Áudio
+						 <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+					 </div>
+					 <div class="modal-body px-5">
+						 <div class="form-outline">
+						  <label class="form-label" for="sldVolume">Volume: </label>
+						  <div class="range">
+							  <input type="range" class="form-range" min="0" max="100" value="100" step="1" id="sldVolume" />
+							</div>
+						 <label class="form-label" for="micSrc">Dispositivo: </label>
+						 <div style="font-size: 12px; margin-bottom: 4px; width: 100%;" id="listmic"> 
+						</div>
+						</div>
+						<button type="button" class="btn btn-primary btn-block mb-3 btnSaveAudio" id="btnSaveAudio">Salvar</button>
+					 </div>
+				 </div>
+			 </div>
+		 </div>
+
+    </div>
+   <div class="modal top fade" id="mdlLogin" tabindex="-1" aria-labelledby="mdlLoginModalLabel" aria-hidden="true" data-mdb-backdrop="true" data-mdb-keyboard="true">
+                			 <div class="modal-dialog">
+                				 <div class="modal-content text-left">
+                					 <div class="modal-header h5 text-white bg-primary justify-content-left">
+                						 Configurações de SIP
+                						 <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                					 </div>
+                					<div class="modal-body">
+   								<form>
+					  <p class="text-center">Para usar nossa demonstração, você precisará de suas credenciais SIP de sua conta. Todos os campos são necessários</p>
+					  <div class="form-outline mb-4">
+						<input type="text" name="Display" id="Display" class="form-control" />
+						<label class="form-label" for="Display">Nome de Exibição</label>
+					  </div>
+					  <div class="form-outline mb-4">
+						<input type="text" name="User" id="User" class="form-control" />
+						<label class="form-label" for="User">Usuário SIP</label>
+					  </div>
+					  <div class="form-outline mb-4">
+						<input type="password" name="Pass" id="Pass" class="form-control" />
+						<label class="form-label" for="Pass">Senha SIP</label>
+					  </div>
+					  <div class="form-outline mb-4">
+						<input type="text" name="WSServer" id="WSServer" class="form-control" />
+						<label class="form-label" for="WSServer">Servidor WebRTC</label>
+					  </div>
+					  <div class="form-outline mb-4">
+					   <input type="text" name="Realm" id="Realm" class="form-control" />
+					   <label class="form-label" for="Realm">Domínio SIP</label>
+					 </div>        
+					  <button type="button" id="btnConfig" class="btn btn-primary btn-block mb-3">Salvar</button>
+					</form>
+   			 </div>
+                				 </div>
+                			 </div>
+                		 </div>
+   </div>
+   </div>
+ 
+    <!-- End your project here-->
+    <!-- MDB -->
+    <audio id="ringtone" src="./audio/mp3/ringtone_in.mp3" loop></audio>
+    <audio id="ringbacktone" src="./audio/mp3/outgoing.mp3" loop></audio>
+    <audio id="dtmfTone" src="./audio/mp3/dtmf.mp3"></audio>
+    <audio id="audioRemote"></audio>
+    <script src="/resources/jquery/jquery-3.6.1.min.js"></script>
+    
+    <script type="text/javascript" src="/app/flux_phone/prod/assets/js/script.js"></script>
+    <script type="text/javascript" src="/app/flux_phone/prod/assets/js/mdb.min.js"></script>
+    <script src="/app/flux_phone/prod/assets/js/core/popper.min.js"></script>
+    <script src="/app/flux_phone/prod/assets/js/core/bootstrap.min.js"></script>
+    <script src="/app/flux_phone/prod/assets/js/plugins/perfect-scrollbar.min.js"></script>
+    <script src="/app/flux_phone/prod/assets/js/plugins/smooth-scrollbar.min.js"></script>
+    <script src="/app/flux_phone/prod/assets/js/plugins/bootstrap-notify.js"></script>
+    <script src="/app/flux_phone/prod/assets/js/plugins/dev-dashboard.js"></script>
+    <script src="/app/flux_phone/prod/assets/js/plugins/chartjs.min.js"></script>
+<script type="text/javascript" src="/app/flux_phone/prod/assets/js/moment.js/moment.min.js"></script>
+<script type="text/javascript" src="/app/flux_phone/prod/assets/js/moment.js/pt-br.js"></script>
+<script type="text/javascript" src="/app/flux_phone/prod/assets/sip/sip-0.13.5.js"></script>
+
+<script src="/resources/datatables/datatables/jquery.dataTables.min.js"></script>
+<script src="/resources/datatables/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/resources/datatables/datatables-responsive/js/dataTables.responsive.js"></script>
+<script src="/resources/datatables/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+
+
+<!--<script type="text/javascript" src="/assets/sip/config.js"></script>-->
+
+<!--<script type="text/javascript" src="/app/flux_phone/prod/assets/sip/app.js"></script>-->
+<script>
+$(function() {
+    $('#tabContacts').click(function() {
+
+        $.ajax({
+            method: "POST",
+            url: "/app/flux_phone/contatos.php",
+            data: {
+                contacts: $(this).val()
+            },
+            success: function(data){
+            $('#contacts').empty().append(data);
+
+            }
+        });
+    });
+});
+</script>
+<script>
+  $(function () {
+  
+
+  $('#example').dataTable( {
+    
+			     "language": {
+			           "zeroRecords": "Nenhum registro encontrado",
+			           "lengthMenu": 'Exibir <select>'+
+			             '<option value="10">10</option>'+
+			             '<option value="20">20</option>'+
+			             '<option value="30">30</option>'+
+			             '<option value="40">40</option>'+
+			             '<option value="50">50</option>'+
+			             '<option value="100">100</option>'+
+			             '<option value="-1">Todos</option>'+
+			             '</select> registros'
+			         },
+			         "responsive": true,
+			         "autoWidth": true,
+			         "paging": true,
+			         "lengthChange": true,
+			         "ordering": true,
+			         "order": [[0,'asc']],
+			         "searching": true
+			       });
+ 
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+  });
+</script>
+  </body>
+</html>
