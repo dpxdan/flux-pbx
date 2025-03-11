@@ -1,9 +1,9 @@
-What is [FluxPBX](https://www.fluxpbx.com/)?
+What is [FluxPBX](https://flux.net.br/)?
 --------------------------------------
 
-[FluxPBX](https://www.fluxpbx.com/) can be used as a single or domain based multi-tenant PBX, carrier grade switch, call center server, fax server, VoIP server, voicemail server, conference server, voice application server, multi-tenant appliance framework and more. [FreeSWITCH™](https://freeswitch.com) is a highly scalable, multi-threaded, multi-platform communication platform. 
+[FluxPBX](https://flux.net.br/) can be used as a single or domain based multi-tenant PBX, carrier grade switch, call center server, fax server, VoIP server, voicemail server, conference server, voice application server, multi-tenant appliance framework and more. [FreeSWITCH™](https://freeswitch.com) is a highly scalable, multi-threaded, multi-platform communication platform. 
 
-It provides the functionality your business needs and brings carrier grade switching, and corporate-level phone system features to small, medium, and large businesses. Read more at [FluxPBX](https://www.fluxpbx.com/). [Please visit our youtube channel](https://www.youtube.com/FluxPBX)
+It provides the functionality your business needs and brings carrier grade switching, and corporate-level phone system features to small, medium, and large businesses. Read more at [FluxPBX](https://flux.net.br/). [Please visit our youtube channel](https://www.youtube.com/FluxPBX)
 
 In addition to providing all of the usual PBX functionality, FluxPBX allows you to configure:
 
@@ -26,7 +26,7 @@ Software Requirements
 --------------------------------------
 
 - FluxPBX will run on Debian, Ubuntu LTS, Darwin, CentOS, and more.
-- [FluxPBX Installer](https://www.fluxpbx.com/download.php)
+- [FluxPBX Installer](https://flux.net.br/download.php)
 
 How to Install FluxPBX
 ----------------------------
@@ -63,11 +63,11 @@ This install script is designed to be an fast, simple, and in a modular way to i
 Some installations require special considerations. Visit https://github.com/fluxpbx/fluxpbx-install.sh readme section for more details.
 
 ### ISSUES
-If you find a bug sign up for an account on [www.fluxpbx.com](https://www.fluxpbx.com) to report the issue.
+If you find a bug sign up for an account on [flux.net.br](https://flux.net.br) to report the issue.
 
 ---
 
-<a href="url"><img src="https://www.fluxpbx.com/app/account/resources/images/member_emblem_xl_blue.png" align="center" height="350" width="240" ></a>
+<a href="url"><img src="https://flux.net.br/app/account/resources/images/member_emblem_xl_blue.png" align="center" height="350" width="240" ></a>
 
 
 FluxPBX Members
@@ -75,10 +75,10 @@ FluxPBX Members
 
 FluxPBX Memberships are for businesses that want to get the most out of FluxPBX. A FluxPBX Member actively receives news and updates, has access to past training videos, additional member documentation, and live monthly continuing education training.
 
-[How to sign up](https://www.fluxpbx.com/app/account/members.php)
+[How to sign up](https://flux.net.br/app/account/members.php)
 -----------------
 
-[Create](https://www.fluxpbx.com/account) an Account. Then [login](https://www.fluxpbx.com/login) and click on **Become a Member** and then **Join Now**. [From there follow the simple instructions](https://www.fluxpbx.com/app/account/members.php). After signing up as a FluxPBX member you will get **instant access** to your member benefits. 
+[Create](https://flux.net.br/account) an Account. Then [login](https://flux.net.br/login) and click on **Become a Member** and then **Join Now**. [From there follow the simple instructions](https://flux.net.br/app/account/members.php). After signing up as a FluxPBX member you will get **instant access** to your member benefits. 
 
 Receive News & Updates
 -----------------------
@@ -240,11 +240,11 @@ Commercial Support
 --------------------------------------
 These options support the project and cover any kind of help you might need from architecture, installation, best practices, troubleshooting, custom feature programming, and training.
 
-1. [Commercial Paid Support](https://www.fluxpbx.com/support)
-2. [Custom Feature Development](https://www.fluxpbx.com/support)
-3. [Admin Training](https://www.fluxpbx.com)
-4. [Advanced Training](https://www.fluxpbx.com)
-5. [Developer Training](https://www.fluxpbx.com)
+1. [Commercial Paid Support](https://flux.net.br/support)
+2. [Custom Feature Development](https://flux.net.br/support)
+3. [Admin Training](https://flux.net.br)
+4. [Advanced Training](https://flux.net.br)
+5. [Developer Training](https://flux.net.br)
 
 
 Community
@@ -252,7 +252,7 @@ Community
 We have a pretty thriving community. You can find us here:
 
 - [Twitter](https://twitter.com/fluxpbx)
-- [Website](https://www.fluxpbx.com)
+- [Website](https://flux.net.br)
 
 Contributing
 ---------------------------------------
@@ -267,4 +267,5 @@ We ask that you sign the Contributor License Agreement for the following reasons
 ### How to Contribute
 * [The Quick Way](https://github.com/FluxPBX/opensource/blob/master/sign-cla.md) - Step by step instructions to contribute to FluxPBX with links to our CLA and how to submit pull requests.
 * [The FluxPBX Contribution Site](https://github.com/FluxPBX/opensource) - The full repo with more information for the curious.
+
 
